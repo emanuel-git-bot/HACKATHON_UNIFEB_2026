@@ -1,0 +1,24 @@
+{
+  "name": "syncfeb",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w apps/api\" \"npm run dev -w apps/web\"",
+    "build": "npm run build -w apps/web",
+    "test": "vitest run",
+    "typecheck": "npm run typecheck -w packages/core && npm run typecheck -w apps/api && npm run typecheck -w apps/web",
+    "db:migrate:local": "npm run db:migrate:local -w apps/api",
+    "db:seed:local": "npm run db:seed:local -w apps/api",
+    "deploy": "npm run build && npm run deploy -w apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4"
+  }
+}

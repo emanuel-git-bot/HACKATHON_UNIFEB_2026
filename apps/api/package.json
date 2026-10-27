@@ -1,0 +1,27 @@
+{
+  "name": "@syncfeb/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc -p tsconfig.json",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "db:seed:sql": "tsx scripts/seed.ts > seed.sql",
+    "db:seed:local": "npm run db:seed:sql && wrangler d1 execute DB --local --file=seed.sql",
+    "db:seed:remote": "npm run db:seed:sql && wrangler d1 execute DB --remote --file=seed.sql"
+  },
+  "dependencies": {
+    "@syncfeb/core": "*",
+    "hono": "^4.7.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250101.0",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "wrangler": "^4.20.0"
+  }
+}
