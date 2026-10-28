@@ -55,7 +55,7 @@ export function PrintListPage() {
           </tbody>
         </table>
         <p className="mt-6 text-xs">
-          Após o evento, lance as presenças em SyncFEB → Gerenciar evento → Lançamento manual.
+          Após o evento, lance as presenças no Campus FEB → Gerenciar evento → Lançamento manual.
         </p>
       </article>
     </div>

@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "syncfeb",
+      "name": "campusfeb",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "-w", "apps/api"],
-      "port": 8787
+      "port": 8788
     }
   ]
 }

@@ -63,5 +63,6 @@ export function useAuth(): AuthState {
 export function homePathFor(role: Role): string {
   if (role === "coordinator") return "/coord";
   if (role === "admin") return "/admin";
-  return "/eventos";
+  if (role === "organizer") return "/atletica";
+  return "/inicio";
 }

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { GraduationCap, Plus, Trash2, Users, Wifi } from "lucide-react";
+import { GraduationCap, Plus, Trash2, Trophy, Users, Wifi } from "lucide-react";
 import { Badge, Button, Card, ErrorBox, Field, Input, PageTitle, Select, Spinner, cx } from "../../components/ui";
 import { ApiError, api } from "../../lib/api";
 import { useApi } from "../../lib/useApi";
@@ -19,6 +19,7 @@ interface Coordinator {
 
 const TABS = [
   { id: "coord", label: "Coordenadores", icon: Users },
+  { id: "orgs", label: "Atlética", icon: Trophy },
   { id: "courses", label: "Cursos", icon: GraduationCap },
   { id: "network", label: "Rede da faculdade", icon: Wifi },
 ] as const;
@@ -29,7 +30,7 @@ export function AdminPage() {
 
   return (
     <div>
-      <PageTitle title="Administração" subtitle="Cursos, coordenadores e rede autorizada." />
+      <PageTitle title="Administração" subtitle="Coordenadores, Atlética, cursos e rede autorizada." />
       <div className="mb-5 flex gap-2 overflow-x-auto" role="tablist">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
@@ -47,6 +48,7 @@ export function AdminPage() {
         ))}
       </div>
       {tab === "coord" && <CoordinatorsTab courses={courses.data?.courses ?? []} />}
+      {tab === "orgs" && <OrganizersTab />}
       {tab === "courses" && <CoursesTab courses={courses.data?.courses} onCreated={() => void courses.reload()} />}
       {tab === "network" && <NetworkTab />}
     </div>
@@ -144,6 +146,88 @@ function CoordinatorsTab({ courses }: { courses: Course[] }) {
                 </option>
               ))}
             </Select>
+          </Field>
+          <Field label="Senha inicial">
+            <Input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} minLength={6} required autoComplete="off" />
+          </Field>
+          {error && <ErrorBox message={error} />}
+          <Button type="submit" loading={busy} className="w-full">
+            <Plus className="size-4" aria-hidden /> Cadastrar
+          </Button>
+        </form>
+      </Card>
+    </div>
+  );
+}
+
+interface Organizer {
+  id: string;
+  name: string;
+  login: string;
+  active: boolean;
+}
+
+/** Contas da Atlética (e outras organizações): criam jogos com confirmação de presença. */
+function OrganizersTab() {
+  const list = useApi<{ organizers: Organizer[] }>("/admin/organizers");
+  const empty = { name: "", login: "", password: "" };
+  const [form, setForm] = useState(empty);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function create(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await api("/admin/organizers", { body: form });
+      setForm(empty);
+      await list.reload();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Erro ao cadastrar.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function toggle(o: Organizer) {
+    await api(`/admin/organizers/${o.id}`, { method: "PUT", body: { active: !o.active } });
+    await list.reload();
+  }
+
+  return (
+    <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
+      <Card className="p-0">
+        {list.loading && <Spinner />}
+        <ul className="divide-y divide-slate-100">
+          {list.data?.organizers.map((o) => (
+            <li key={o.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+              <div>
+                <p className="font-semibold">
+                  {o.name} {o.active ? <Badge tone="emerald">Ativa</Badge> : <Badge tone="red">Inativa</Badge>}
+                </p>
+                <p className="text-sm text-slate-500">
+                  Login <span className="font-mono">{o.login}</span>
+                </p>
+              </div>
+              <Button variant={o.active ? "danger" : "success"} onClick={() => void toggle(o)}>
+                {o.active ? "Desativar" : "Reativar"}
+              </Button>
+            </li>
+          ))}
+        </ul>
+        {list.data?.organizers.length === 0 && <p className="p-6 text-center text-sm text-slate-500">Nenhuma conta de organização.</p>}
+      </Card>
+
+      <Card>
+        <h2 className="mb-1 font-bold">Nova conta de organização</h2>
+        <p className="mb-4 text-sm text-slate-500">Para a Atlética publicar jogos e festas. Esses eventos não valem horas.</p>
+        <form onSubmit={create} className="space-y-3">
+          <Field label="Nome">
+            <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ex.: Atlética Cerberus" required />
+          </Field>
+          <Field label="Login">
+            <Input value={form.login} onChange={(e) => setForm({ ...form, login: e.target.value })} autoCapitalize="none" required />
           </Field>
           <Field label="Senha inicial">
             <Input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} minLength={6} required autoComplete="off" />

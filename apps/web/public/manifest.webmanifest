@@ -1,11 +1,11 @@
 {
-  "name": "SyncFEB",
-  "short_name": "SyncFEB",
-  "description": "Presença anti-fraude e certificados de horas complementares do UNIFEB.",
+  "name": "Campus FEB",
+  "short_name": "Campus FEB",
+  "description": "Mapa do campus, eventos, grupos de estudo, avisos e guia do calouro do UNIFEB.",
   "lang": "pt-BR",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
-  "theme_color": "#1e40af",
+  "theme_color": "#1b2a63",
   "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
 }

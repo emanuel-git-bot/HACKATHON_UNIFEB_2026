@@ -42,9 +42,12 @@ export function EventCard({ event, onChange }: { event: StudentEvent; onChange?:
         <p className="flex items-center gap-1.5">
           <Clock className="size-4 text-slate-400" aria-hidden /> {formatRange(event.startsAt, event.endsAt)}
         </p>
-        <p className="flex items-center gap-1.5">
+        <Link
+          to={`/mapa?q=${encodeURIComponent(event.location)}`}
+          className="flex w-fit items-center gap-1.5 underline decoration-slate-300 underline-offset-2 hover:text-brand-800"
+        >
           <MapPin className="size-4 text-slate-400" aria-hidden /> {event.location}
-        </p>
+        </Link>
       </div>
       {onChange && !event.attendance && (
         <Button

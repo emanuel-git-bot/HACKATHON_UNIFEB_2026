@@ -40,7 +40,6 @@ interface CheckinResponse {
   phase: "entry" | "exit";
   event: EventSummary;
   attendance: Attendance;
-  certificateId?: string | null;
   repeated?: boolean;
 }
 
@@ -234,10 +233,10 @@ function SuccessResult({ result }: { result: CheckinResponse }) {
       <ResultScreen tone="green" icon={<CheckCircle2 className="size-20" strokeWidth={2.5} />} title="Presença confirmada!">
         {eventLine}
         <p className="text-4xl font-extrabold text-emerald-700">+{formatHours(event.hours)}</p>
-        <p>{result.repeated ? "Você já tinha registrado esta etapa." : "Seu certificado já está disponível."}</p>
-        <Link to={result.certificateId ? `/certificados/${result.certificateId}` : "/horas"}>
+        <p>{result.repeated ? "Você já tinha registrado esta etapa." : "As horas já entraram na sua conta."}</p>
+        <Link to="/horas">
           <Button variant="success" className="mt-2 w-full">
-            Ver certificado
+            Ver minhas horas
           </Button>
         </Link>
       </ResultScreen>

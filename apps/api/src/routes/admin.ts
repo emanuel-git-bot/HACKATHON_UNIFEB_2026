@@ -25,6 +25,9 @@ const coordinatorUpdateSchema = z.object({
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres.").optional(),
 });
 
+const organizerSchema = coordinatorSchema.omit({ courseId: true });
+const organizerUpdateSchema = coordinatorUpdateSchema.pick({ active: true, password: true });
+
 const IP_RULE = /^(\d{1,3}(\.\d{1,3}){3}(\/\d{1,2})?|(?=[0-9a-fA-F]*:)[0-9a-fA-F:]{2,39})$/;
 const networkSchema = z.object({
   allowedIps: z.array(z.string().trim().regex(IP_RULE, "IP ou faixa inválida (ex.: 200.150.10.0/24).")).max(50),
@@ -115,6 +118,52 @@ export const adminRoutes = new Hono<AppEnv>()
         .run();
     }
     // Desativar ou trocar senha derruba as sessões abertas.
+    if (active === 0 || body.password) await db.prepare("DELETE FROM sessions WHERE user_id = ?").bind(id).run();
+    return c.json({ ok: true });
+  })
+
+  /** Contas de organização (Atlética): criam jogos e festas com confirmação de presença. */
+  .get("/organizers", async (c) => {
+    const rows = await c.env.DB.prepare(
+      "SELECT id, name, ra AS login, active FROM users WHERE role = 'organizer' ORDER BY name",
+    ).all<{ id: string; name: string; login: string; active: number }>();
+    return c.json({ organizers: rows.results.map((r) => ({ ...r, active: r.active === 1 })) });
+  })
+
+  .post("/organizers", async (c) => {
+    const body = await parseBody(c, organizerSchema);
+    const db = c.env.DB;
+    if (await db.prepare("SELECT id FROM users WHERE ra = ?").bind(body.login).first()) {
+      throw new ApiError(409, "login_taken", "Este login já está em uso.", { field: "login" });
+    }
+    const id = crypto.randomUUID();
+    await db
+      .prepare(
+        `INSERT INTO users (id, role, ra, name, course_id, password_hash, active, created_at)
+         VALUES (?, 'organizer', ?, ?, NULL, ?, 1, ?)`,
+      )
+      .bind(id, body.login, body.name, await hashPassword(body.password, passwordIterations(c.env)), Date.now())
+      .run();
+    return c.json({ organizer: { id, name: body.name, login: body.login, active: true } }, 201);
+  })
+
+  .put("/organizers/:id", async (c) => {
+    const body = await parseBody(c, organizerUpdateSchema);
+    const db = c.env.DB;
+    const id = c.req.param("id");
+    const current = await db
+      .prepare("SELECT active FROM users WHERE id = ? AND role = 'organizer'")
+      .bind(id)
+      .first<{ active: number }>();
+    if (!current) throw notFound("Organização");
+    const active = body.active === undefined ? current.active : Number(body.active);
+    await db.prepare("UPDATE users SET active = ? WHERE id = ?").bind(active, id).run();
+    if (body.password) {
+      await db
+        .prepare("UPDATE users SET password_hash = ? WHERE id = ?")
+        .bind(await hashPassword(body.password, passwordIterations(c.env)), id)
+        .run();
+    }
     if (active === 0 || body.password) await db.prepare("DELETE FROM sessions WHERE user_id = ?").bind(id).run();
     return c.json({ ok: true });
   })

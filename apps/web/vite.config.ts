@@ -7,6 +7,6 @@ export default defineConfig({
   server: {
     port: 5173,
     // Em desenvolvimento a API roda no `wrangler dev`.
-    proxy: { "/api": "http://localhost:8787" },
+    proxy: { "/api": "http://localhost:8788" },
   },
 });

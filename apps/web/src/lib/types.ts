@@ -1,4 +1,4 @@
-export type Role = "student" | "coordinator" | "admin";
+export type Role = "student" | "coordinator" | "admin" | "organizer";
 export type CheckinMode = "entry" | "exit" | "entry_exit" | "entry_keyword";
 export type AttendanceStatus = "incomplete" | "suspect" | "completed" | "rejected";
 export type Phase = "entry" | "exit";
@@ -54,16 +54,3 @@ export interface EventCounts {
   attendance: number;
 }
 
-export interface Certificate {
-  id: string;
-  studentName: string;
-  studentRa: string;
-  eventTitle: string;
-  eventStartsAt: number;
-  eventEndsAt: number;
-  eventLocation: string;
-  courseName: string;
-  hours: number;
-  issuedAt: number;
-  verificationCode: string;
-}

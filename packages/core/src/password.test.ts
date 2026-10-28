@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { hashPassword, verifyPassword } from "./password";
-import { verificationCode } from "./encoding";
 
 describe("senhas", () => {
   it("verifica a senha correta e recusa a errada", async () => {
@@ -16,11 +15,5 @@ describe("senhas", () => {
 
   it("recusa formato desconhecido", async () => {
     expect(await verifyPassword("x", "texto-puro")).toBe(false);
-  });
-});
-
-describe("código de verificação", () => {
-  it("segue o formato SFB-XXXX-XXXX", () => {
-    expect(verificationCode()).toMatch(/^SFB-[A-Z2-9]{4}-[A-Z2-9]{4}$/);
   });
 });

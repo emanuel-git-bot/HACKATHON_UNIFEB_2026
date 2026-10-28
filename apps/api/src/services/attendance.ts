@@ -1,6 +1,6 @@
-import { deriveStatus, evaluateLocation, verificationCode, type GpsReading, type LocationResult } from "@syncfeb/core";
+import { deriveStatus, evaluateLocation, type GpsReading, type LocationResult } from "@syncfeb/core";
 import { parseJsonList } from "../lib/http";
-import type { AttendanceRow, CertificateRow, EventRow } from "../lib/rows";
+import type { AttendanceRow, EventRow } from "../lib/rows";
 
 export type AttemptResult = "accepted" | "suspect" | "rejected";
 
@@ -82,13 +82,13 @@ export async function registerUser(db: D1Database, eventId: string, userId: stri
     .run();
 }
 
-/** Recalcula o status, grava a presença e emite o certificado quando ela fica concluída. */
+/** Recalcula o status e grava a presença. */
 export async function saveAttendance(
   db: D1Database,
   event: EventRow,
   row: AttendanceRow,
   isNew: boolean,
-): Promise<{ attendance: AttendanceRow; certificate: CertificateRow | null }> {
+): Promise<{ attendance: AttendanceRow }> {
   const now = Date.now();
   const status = deriveStatus({
     mode: event.checkin_mode,
@@ -125,8 +125,7 @@ export async function saveAttendance(
       .run();
   }
 
-  const certificate = status === "completed" ? await issueCertificate(db, next, event) : null;
-  return { attendance: next, certificate };
+  return { attendance: next };
 }
 
 export function newAttendance(eventId: string, userId: string, deviceToken: string): AttendanceRow {
@@ -147,38 +146,4 @@ export function newAttendance(eventId: string, userId: string, deviceToken: stri
     created_at: now,
     updated_at: now,
   };
-}
-
-/** No máximo um certificado por presença (e, portanto, por aluno e evento). */
-export async function issueCertificate(
-  db: D1Database,
-  attendance: AttendanceRow,
-  event: EventRow,
-): Promise<CertificateRow> {
-  const existing = await db
-    .prepare("SELECT * FROM certificates WHERE attendance_id = ?")
-    .bind(attendance.id)
-    .first<CertificateRow>();
-  if (existing) return existing;
-
-  const cert: CertificateRow = {
-    id: crypto.randomUUID(),
-    attendance_id: attendance.id,
-    user_id: attendance.user_id,
-    event_id: event.id,
-    hours: event.hours,
-    verification_code: verificationCode(),
-    issued_at: Date.now(),
-  };
-  await db
-    .prepare(
-      `INSERT OR IGNORE INTO certificates (id, attendance_id, user_id, event_id, hours, verification_code, issued_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    )
-    .bind(cert.id, cert.attendance_id, cert.user_id, cert.event_id, cert.hours, cert.verification_code, cert.issued_at)
-    .run();
-  return (
-    (await db.prepare("SELECT * FROM certificates WHERE attendance_id = ?").bind(attendance.id).first<CertificateRow>()) ??
-    cert
-  );
 }

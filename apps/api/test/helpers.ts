@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { hashPassword } from "@syncfeb/core";
@@ -32,8 +32,10 @@ class TestStatement {
 
 export function createTestDb(): D1Database {
   const db = new DatabaseSync(":memory:");
-  const migration = fileURLToPath(new URL("../migrations/0001_init.sql", import.meta.url));
-  db.exec(readFileSync(migration, "utf8"));
+  const dir = fileURLToPath(new URL("../migrations/", import.meta.url));
+  for (const file of readdirSync(dir).filter((f) => f.endsWith(".sql")).sort()) {
+    db.exec(readFileSync(dir + file, "utf8"));
+  }
   const d1 = {
     prepare: (sql: string) => new TestStatement(db, sql),
     exec: async (sql: string) => {

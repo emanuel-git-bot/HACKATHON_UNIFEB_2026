@@ -133,7 +133,7 @@ export function TelaoPage() {
           <div className="flex max-w-3xl flex-col items-center gap-4 rounded-3xl bg-white/5 p-10 ring-1 ring-white/10">
             <KeyRound className="size-24 text-amber-400" aria-hidden />
             <p className="text-4xl font-extrabold">Digite a palavra-chave no app</p>
-            <p className="text-xl text-slate-300">Abra o SyncFEB → Meus eventos → este evento, e digite a palavra dita pelo palestrante.</p>
+            <p className="text-xl text-slate-300">Abra o Campus FEB → Meus eventos → este evento, e digite a palavra dita pelo palestrante.</p>
           </div>
         )}
 

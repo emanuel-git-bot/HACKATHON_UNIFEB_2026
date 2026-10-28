@@ -41,16 +41,6 @@ export interface AttendanceRow {
   updated_at: number;
 }
 
-export interface CertificateRow {
-  id: string;
-  attendance_id: string;
-  user_id: string;
-  event_id: string;
-  hours: number;
-  verification_code: string;
-  issued_at: number;
-}
-
 /** Dados do evento que podem sair da API (nunca o segredo do QR nem o hash da palavra-chave). */
 export function publicEvent(row: EventRow & { course_name?: string | null }) {
   return {

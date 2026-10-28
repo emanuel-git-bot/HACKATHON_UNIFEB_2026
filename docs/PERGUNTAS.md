@@ -21,6 +21,14 @@ Legenda: `[ ]` aberta · `[x]` respondida
 - **Aluno sem celular:** o coordenador **gera e imprime uma lista de presença** do evento, os alunos assinam, e depois ele **lança as presenças manualmente** no sistema.
 - **Contas de demonstração:** aluno(s), coordenador e um **admin master** para o dono do projeto.
 
+## Validação com o coordenador (conversa após o MVP)
+- **Fluxo atual dele:** imprime a lista → alunos assinam → fotografa com o celular → um app extrai os dados → Google Drive → envia para onde precisa. Ele considera o problema de coleta **já resolvido**.
+- **Fraude:** a comissão eleita do 4º ano fiscaliza as listas, então assinatura falsa é **rara** segundo ele. O argumento "anti-fraude" fica fraco como dor do coordenador.
+- **Divulgação de eventos:** feita por grupo de WhatsApp e posts no Instagram.
+- **Secretaria:** usa um sistema próprio ao qual não teremos acesso. A integração com ela está fora do alcance.
+- [ ] **P18.** Como funciona hoje a validação de horas de cursos externos (Alura, Udemy...)? Quanto tempo leva? (a resposta anterior falou de divulgação, não disso)
+- [ ] **P19.** Os alunos sabem quantas horas complementares já têm? Já perderam evento que dava horas por não ver o aviso? (perguntar a colegas de turma)
+
 ## Escopo e apresentação
 - [x] **P1.** Quem programa é o dono do projeto + Claude. Outras 3 pessoas ajudam nos testes (com outras IAs).
 - [x] **P2.** Local: Tribunal do Júri. Wi-Fi incerto, a demo usa os dados móveis como garantia.
@@ -55,3 +63,13 @@ Legenda: `[ ]` aberta · `[x]` respondida
 ## Para depois (Parte 3, fora da demo)
 - [ ] **P16.** Regulamento de horas complementares do UNIFEB: categorias e limite de horas por categoria.
 - [ ] **P17.** Se a IA voltar ao escopo: usar a opção gratuita (Cloudflare Workers AI) ou a paga (Claude API)?
+
+## Campus FEB (projeto 2)
+- **Decisão:** sai o certificado. Ficam o QR de eventos, os coordenadores e o admin. Entram o mapa, os grupos de estudo, os avisos, os materiais, a acessibilidade e o guia do calouro (tema do desafio).
+- [ ] **P20.** Quais são os nomes reais dos blocos e das salas, e em que prédio fica cada setor (Secretaria, Pró-Aluno, cantina...)? As posições do mapa vêm do OpenStreetMap, mas os nomes são exemplos. Corrigir em Admin → Mapa.
+- [ ] **P21.** Onde ficam de verdade os banheiros acessíveis e as rampas? (O UNIFEB não tem elevadores; já foram tirados do mapa.) Dá para levantar isso andando pelo campus com o celular (o editor mostra a posição ao clicar).
+- [ ] **P22.** Horário real da cantina e dos setores de atendimento. Do site só tiramos o da biblioteca: seg a sex, 9h às 22h.
+- [ ] **P23.** Quem modera os materiais e os grupos: só o admin, ou também os coordenadores?
+- **Decisões (28/10):** não há elevadores nem minicursos. Só palestras valem horas. A Atlética tem conta própria para jogos com "confirmar presença" (sem horas) e link para WhatsApp. Coordenadores publicam vagas de estágio e emprego nos avisos. Os banners do site do UNIFEB aparecem em Avisos.
+- [ ] **P24.** Qual é o nome oficial da Atlética e quem vai usar a conta dela? Hoje a conta de demo se chama "Atlética Cerberus".
+- [ ] **P25.** A Atlética joga em quadra própria no campus ou em ginásio de fora? O mapa tem uma "Quadra poliesportiva" de exemplo.

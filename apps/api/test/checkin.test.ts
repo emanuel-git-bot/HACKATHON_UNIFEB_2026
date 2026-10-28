@@ -116,7 +116,7 @@ describe("leitura do QR (scan)", () => {
 });
 
 describe("check-in", () => {
-  it("confirma presença perto do local, emite certificado e conta no telão", async () => {
+  it("confirma presença perto do local e conta no telão", async () => {
     const id = await createEvent();
     await openPhase(id, "entry");
     const student = createClient(env);
@@ -124,7 +124,6 @@ describe("check-in", () => {
     const r = await scanAndCheckin(student, id);
     expect(r.status).toBe(200);
     expect(r.body.attendance.status).toBe("completed");
-    expect(r.body.certificateId).toBeTruthy();
     expect((await currentCode(id)).count).toBe(1);
     // inscrição automática
     expect((await student.json("/me/events")).body.events[0].registered).toBe(true);
@@ -182,7 +181,6 @@ describe("check-in", () => {
     expect(r.status).toBe(200);
     expect(r.body.attendance.status).toBe("suspect");
     expect(r.body.attendance.suspectReason).toContain("Fora do raio");
-    expect(r.body.certificateId).toBeNull();
   });
 
   it("GPS negado fica suspeito", async () => {
@@ -213,12 +211,10 @@ describe("check-in", () => {
     await login(student, "1001");
     const entry = await scanAndCheckin(student, id);
     expect(entry.body.attendance.status).toBe("incomplete");
-    expect(entry.body.certificateId).toBeNull();
 
     await openPhase(id, "exit");
     const exit = await scanAndCheckin(student, id);
     expect(exit.body.attendance.status).toBe("completed");
-    expect(exit.body.certificateId).toBeTruthy();
   });
 
   it("modo só saída: a saída sozinha conclui", async () => {
@@ -253,7 +249,6 @@ describe("palavra-chave", () => {
     const r = await student.json(`/events/${id}/keyword`, { body: { keyword: " CRIPTOGRAFÍA ", gps: NEAR_GPS } });
     expect(r.status).toBe(200);
     expect(r.body.attendance.status).toBe("completed");
-    expect(r.body.certificateId).toBeTruthy();
   });
 
   it("bloqueia após 3 erros e marca como suspeita", async () => {

@@ -50,9 +50,3 @@ export function timingSafeEqual(a: string, b: string): boolean {
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
 }
-
-/** Código de verificação de certificado no formato SFB-XXXX-XXXX. */
-export function verificationCode(): string {
-  const raw = toBase32(randomBytes(5)).slice(0, 8);
-  return `SFB-${raw.slice(0, 4)}-${raw.slice(4, 8)}`;
-}

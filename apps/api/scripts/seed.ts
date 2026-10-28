@@ -4,6 +4,7 @@
  * As senhas de demo estão documentadas no README.
  */
 import { hashKeyword, hashPassword, randomToken } from "@syncfeb/core";
+import { brasiliaAt, campusSeedLines } from "./seed-campus";
 
 const now = Date.now();
 const HOUR = 60 * 60 * 1000;
@@ -20,6 +21,7 @@ const users = [
   { id: "user_admin", role: "admin", ra: "admin", name: "Admin Master", course: null, password: "admin@sfb2026" },
   { id: "user_coord_ec", role: "coordinator", ra: "coord.ec", name: "Prof. Ana Ribeiro", course: "course_ec", password: "coord@2026" },
   { id: "user_coord_si", role: "coordinator", ra: "coord.si", name: "Prof. Carlos Mendes", course: "course_si", password: "coord@2026" },
+  { id: "user_atletica", role: "organizer", ra: "atletica", name: "Atlética Cerberus", course: null, password: "atletica@2026" },
   { id: "user_lucas", role: "student", ra: "210345", name: "Lucas Martins", course: "course_ec", password: "123456" },
   { id: "user_beatriz", role: "student", ra: "210812", name: "Beatriz Souza", course: "course_ec", password: "123456" },
   { id: "user_rafael", role: "student", ra: "220117", name: "Rafael Lima", course: "course_ec", password: "123456" },
@@ -49,26 +51,26 @@ const events = [
   },
   {
     id: "evt_react",
-    title: "Minicurso de React do Zero",
-    description: "Monte sua primeira aplicação React com componentes, estado e rotas.",
+    title: "Do código ao deploy: carreira em desenvolvimento web",
+    description: "Como sair da faculdade com projetos publicados: React, APIs e nuvem na prática.",
     speaker: "Prof. Ana Ribeiro",
-    category: "minicurso",
-    location: "Laboratório 3",
-    startsAt: now + DAY,
-    endsAt: now + DAY + 4 * HOUR,
-    hours: 4,
+    category: "palestra",
+    location: "Auditório do Bloco A",
+    startsAt: brasiliaAt(now, 19, 1),
+    endsAt: brasiliaAt(now, 21, 1),
+    hours: 2,
     mode: "entry_exit",
     keyword: null,
   },
   {
-    id: "evt_atletica",
-    title: "Torneio Interatléticas — Atlética Cerberus",
-    description: "Abertura do torneio com apresentação das equipes.",
-    speaker: "Atlética Cerberus",
-    category: "atletica",
-    location: "Ginásio",
-    startsAt: now + 3 * DAY,
-    endsAt: now + 3 * DAY + 3 * HOUR,
+    id: "evt_lgpd",
+    title: "LGPD na prática: o que muda para quem desenvolve",
+    description: "Dados pessoais, consentimento e segurança em sistemas do dia a dia.",
+    speaker: "Convidado da área jurídica",
+    category: "palestra",
+    location: "Teatro Jorge Andrade",
+    startsAt: brasiliaAt(now, 19, 3),
+    endsAt: brasiliaAt(now, 21, 3),
     hours: 2,
     mode: "entry",
     keyword: null,
@@ -77,7 +79,10 @@ const events = [
 
 const lines: string[] = [
   "-- Dados de demonstração (gerado por scripts/seed.ts)",
-  "DELETE FROM certificates; DELETE FROM checkin_attempts; DELETE FROM attendance; DELETE FROM scan_tickets;",
+  "DELETE FROM social_event_rsvps; DELETE FROM social_events; DELETE FROM site_banners;",
+  "DELETE FROM accessibility_reports; DELETE FROM resources; DELETE FROM announcement_reads; DELETE FROM announcements;",
+  "DELETE FROM study_group_members; DELETE FROM study_groups; DELETE FROM places;",
+  "DELETE FROM checkin_attempts; DELETE FROM attendance; DELETE FROM scan_tickets;",
   "DELETE FROM registrations; DELETE FROM events; DELETE FROM sessions; DELETE FROM login_attempts;",
   "DELETE FROM users; DELETE FROM courses;",
 ];
@@ -96,6 +101,8 @@ for (const e of events) {
     `INSERT INTO events (id, course_id, coordinator_id, title, description, speaker, category, location, starts_at, ends_at, hours, lat, lng, radius_m, checkin_mode, keyword_hash, qr_secret, created_at) VALUES (${q(e.id)}, 'course_ec', 'user_coord_ec', ${q(e.title)}, ${q(e.description)}, ${q(e.speaker)}, ${q(e.category)}, ${q(e.location)}, ${e.startsAt}, ${e.endsAt}, ${e.hours}, NULL, NULL, 100, ${q(e.mode)}, ${q(keywordHash)}, ${q(randomToken())}, ${now});`,
   );
 }
+
+lines.push(...campusSeedLines(q, now));
 
 lines.push(
   "INSERT INTO settings (key, value) VALUES ('allowed_ips', '[]') ON CONFLICT(key) DO UPDATE SET value = excluded.value;",

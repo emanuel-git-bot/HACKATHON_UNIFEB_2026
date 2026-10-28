@@ -13,7 +13,7 @@ Este arquivo é lido pelo Claude em toda sessão. Ele define **como** vamos trab
 - **Deploy final:** **Cloudflare**
   - Um único Worker (`apps/api`) serve a API em `/api/*` e o React compilado (Workers Static Assets), na mesma origem
   - Dados → D1 (SQL); KV e R2 só se precisar
-  - Ferramenta: `wrangler`; produção em https://syncfeb.roqueemanuel2018.workers.dev
+  - Ferramenta: `wrangler`; produção em https://campusfeb.roqueemanuel2018.workers.dev (Worker e D1 `campusfeb`, separados do projeto 1)
 - Desde o início, evitar dependências que não rodam no Workers (ex.: `fs`, processos longos, drivers nativos). Se algo não for compatível, avisar antes de usar.
 
 ## Fluxo de trabalho (OpenSpec)

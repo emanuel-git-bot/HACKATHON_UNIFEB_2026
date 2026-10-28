@@ -87,32 +87,32 @@ export const meRoutes = new Hono<AppEnv>()
     return c.json({ events: await withMyState(c.env.DB, user.id, rows.results) });
   })
 
-  .get("/certificates", async (c) => {
+  .get("/hours", async (c) => {
     const user = currentUser(c);
     const rows = await c.env.DB.prepare(
-      `SELECT ce.id, ce.hours, ce.verification_code, ce.issued_at, e.title, e.starts_at, e.location
-       FROM certificates ce JOIN events e ON e.id = ce.event_id
-       WHERE ce.user_id = ? ORDER BY ce.issued_at DESC`,
+      `SELECT a.id, a.updated_at, e.id AS event_id, e.hours, e.title, e.starts_at, e.location
+       FROM attendance a JOIN events e ON e.id = a.event_id
+       WHERE a.user_id = ? AND a.status = 'completed' ORDER BY e.starts_at DESC`,
     )
       .bind(user.id)
       .all<{
         id: string;
+        updated_at: number;
+        event_id: string;
         hours: number;
-        verification_code: string;
-        issued_at: number;
         title: string;
         starts_at: number;
         location: string;
       }>();
-    const certificates = rows.results.map((r) => ({
-      id: r.id,
+    const items = rows.results.map((r) => ({
+      attendanceId: r.id,
+      eventId: r.event_id,
       hours: r.hours,
-      verificationCode: r.verification_code,
-      issuedAt: r.issued_at,
+      confirmedAt: r.updated_at,
       eventTitle: r.title,
       eventStartsAt: r.starts_at,
       eventLocation: r.location,
     }));
-    const totalHours = certificates.reduce((sum, cert) => sum + cert.hours, 0);
-    return c.json({ totalHours, certificates });
+    const totalHours = items.reduce((sum, item) => sum + item.hours, 0);
+    return c.json({ totalHours, items });
   });

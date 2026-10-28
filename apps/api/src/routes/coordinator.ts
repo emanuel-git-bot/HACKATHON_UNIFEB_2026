@@ -27,7 +27,7 @@ const eventSchema = z
     title: z.string().trim().min(3, "Informe o título do evento."),
     description: z.string().trim().max(2000).default(""),
     speaker: z.string().trim().max(200).default(""),
-    category: z.enum(["palestra", "minicurso", "atletica", "grupo_estudo", "outro"]).default("palestra"),
+    category: z.enum(["palestra", "outro"]).default("palestra"),
     location: z.string().trim().min(2, "Informe o local."),
     startsAt: z.number().int().positive("Informe o início."),
     endsAt: z.number().int().positive("Informe o fim."),
@@ -229,7 +229,7 @@ export const coordinatorRoutes = new Hono<AppEnv>()
     }
     att.review = decision === "confirm" ? "confirmed" : "rejected";
     const saved = await saveAttendance(c.env.DB, event, att, false);
-    return c.json({ attendance: publicAttendance(saved.attendance), certificateId: saved.certificate?.id ?? null });
+    return c.json({ attendance: publicAttendance(saved.attendance) });
   })
 
   /** Lançamento manual para quem assinou a lista em papel. */
@@ -269,7 +269,6 @@ export const coordinatorRoutes = new Hono<AppEnv>()
     return c.json({
       attendance: publicAttendance(saved.attendance),
       student: { name: student.name, ra: student.ra },
-      certificateId: saved.certificate?.id ?? null,
     });
   })
 

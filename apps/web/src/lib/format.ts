@@ -50,9 +50,6 @@ export const STATUS_LABELS: Record<AttendanceStatus, string> = {
 
 export const CATEGORY_LABELS: Record<string, string> = {
   palestra: "Palestra",
-  minicurso: "Minicurso",
-  atletica: "Atlética",
-  grupo_estudo: "Grupo de estudo",
   outro: "Outro",
 };
 

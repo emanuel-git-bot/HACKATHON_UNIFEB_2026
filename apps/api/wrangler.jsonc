@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  "name": "syncfeb",
+  "name": "campusfeb",
   "main": "src/index.ts",
   "compatibility_date": "2025-06-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -14,8 +14,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "syncfeb",
-      "database_id": "6d29a071-263a-4c9a-a5cb-269f858c8edf",
+      "database_name": "campusfeb",
+      "database_id": "d87db0e6-2d02-4917-b172-f16f599e0e1c",
       "migrations_dir": "migrations"
     }
   ],

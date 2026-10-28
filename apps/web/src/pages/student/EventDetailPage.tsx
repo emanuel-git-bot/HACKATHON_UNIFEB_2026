@@ -52,9 +52,12 @@ export function EventDetailPage() {
           <p className="flex items-center gap-2">
             <Clock className="size-4 text-slate-400" aria-hidden /> {formatRange(event.startsAt, event.endsAt)}
           </p>
-          <p className="flex items-center gap-2">
+          <Link
+            to={`/mapa?q=${encodeURIComponent(event.location)}`}
+            className="flex w-fit items-center gap-2 underline decoration-slate-300 underline-offset-2 hover:text-brand-800"
+          >
             <MapPin className="size-4 text-slate-400" aria-hidden /> {event.location}
-          </p>
+          </Link>
           {event.speaker && (
             <p className="flex items-center gap-2">
               <Mic className="size-4 text-slate-400" aria-hidden /> {event.speaker}
@@ -85,7 +88,7 @@ function AttendanceCard({ event, attendance, onUpdate }: { event: StudentEvent; 
       <h2 className="mb-2 font-bold">Sua presença</h2>
       {attendance.status === "completed" && (
         <p className="flex items-center gap-2 text-emerald-700">
-          <Award className="size-5" aria-hidden /> Presença confirmada. Seu certificado está em{" "}
+          <Award className="size-5" aria-hidden /> Presença confirmada. As horas já estão em{" "}
           <Link to="/horas" className="font-semibold underline">
             Horas
           </Link>

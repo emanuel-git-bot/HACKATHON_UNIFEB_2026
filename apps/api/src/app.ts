@@ -4,10 +4,12 @@ import { resolveDevice } from "./lib/device";
 import { ApiError } from "./lib/http";
 import { adminRoutes, courseRoutes } from "./routes/admin";
 import { authRoutes } from "./routes/auth";
-import { certificateRoutes, verifyRoutes } from "./routes/certificates";
+import { bannerRoutes } from "./routes/banners";
+import { announcementRoutes, groupRoutes, placeRoutes, reportRoutes, resourceRoutes } from "./routes/campus";
 import { checkinRoutes } from "./routes/checkin";
 import { coordinatorRoutes } from "./routes/coordinator";
 import { eventRoutes, meRoutes } from "./routes/events";
+import { socialEventRoutes } from "./routes/social";
 import type { AppEnv } from "./types";
 
 export function createApp() {
@@ -19,8 +21,13 @@ export function createApp() {
     .route("/courses", courseRoutes)
     .route("/events", eventRoutes)
     .route("/me", meRoutes)
-    .route("/certificates", certificateRoutes)
-    .route("/verify", verifyRoutes)
+    .route("/places", placeRoutes)
+    .route("/groups", groupRoutes)
+    .route("/announcements", announcementRoutes)
+    .route("/resources", resourceRoutes)
+    .route("/accessibility-reports", reportRoutes)
+    .route("/social-events", socialEventRoutes)
+    .route("/banners", bannerRoutes)
     .route("/coord", coordinatorRoutes)
     .route("/admin", adminRoutes)
     .route("/", checkinRoutes);

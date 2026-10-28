@@ -24,21 +24,21 @@ async function checkin(ra: string, gps: unknown) {
 }
 
 describe("revisão de suspeitas", () => {
-  it("confirmar conclui a presença e emite certificado para o aluno", async () => {
+  it("confirmar conclui a presença e soma as horas do aluno", async () => {
     const { student, attendanceId } = await checkin("1001", FAR_GPS);
     const r = await coord.json(`/coord/attendance/${attendanceId}/review`, { body: { decision: "confirm" } });
     expect(r.status).toBe(200);
     expect(r.body.attendance.status).toBe("completed");
-    const certs = await student.json("/me/certificates");
-    expect(certs.body.certificates).toHaveLength(1);
-    expect(certs.body.totalHours).toBe(4);
+    const hours = await student.json("/me/hours");
+    expect(hours.body.items).toHaveLength(1);
+    expect(hours.body.totalHours).toBe(4);
   });
 
-  it("recusar não gera horas nem certificado", async () => {
+  it("recusar não gera horas", async () => {
     const { student, attendanceId } = await checkin("1001", FAR_GPS);
     const r = await coord.json(`/coord/attendance/${attendanceId}/review`, { body: { decision: "reject" } });
     expect(r.body.attendance.status).toBe("rejected");
-    expect((await student.json("/me/certificates")).body.totalHours).toBe(0);
+    expect((await student.json("/me/hours")).body.totalHours).toBe(0);
   });
 
   it("só revisa presença suspeita", async () => {
@@ -57,17 +57,16 @@ describe("revisão de suspeitas", () => {
 });
 
 describe("lançamento manual e lista em papel", () => {
-  it("lança presença por RA como manual e gera certificado", async () => {
+  it("lança presença por RA como manual", async () => {
     const r = await coord.json(`/coord/events/${eventId}/manual`, { body: { ra: "1002" } });
     expect(r.status).toBe(200);
     expect(r.body.attendance).toMatchObject({ status: "completed", origin: "manual" });
-    expect(r.body.certificateId).toBeTruthy();
   });
 
-  it("lançar duas vezes não duplica o certificado", async () => {
+  it("lançar duas vezes não duplica a presença", async () => {
     const a = await coord.json(`/coord/events/${eventId}/manual`, { body: { ra: "1002" } });
     const b = await coord.json(`/coord/events/${eventId}/manual`, { body: { ra: "1002" } });
-    expect(a.body.certificateId).toBe(b.body.certificateId);
+    expect(a.body.attendance.id).toBe(b.body.attendance.id);
   });
 
   it("recusa RA inexistente e aluno de outro curso", async () => {
@@ -92,38 +91,6 @@ describe("lançamento manual e lista em papel", () => {
     const reasons = attempts.body.attempts.map((a: any) => a.reason);
     expect(reasons).toContain("qr_invalid");
     expect(reasons).toContain("ok_gps");
-  });
-});
-
-describe("certificados", () => {
-  it("verificação pública mostra só os dados do certificado", async () => {
-    const r = await coord.json(`/coord/events/${eventId}/manual`, { body: { ra: "1002" } });
-    const cert = await coord.json(`/certificates/${r.body.certificateId}`);
-    const code = cert.body.certificate.verificationCode;
-    expect(code).toMatch(/^SFB-/);
-
-    const pub = await createClient(env).json(`/verify/${code.toLowerCase()}`);
-    expect(pub.status).toBe(200);
-    expect(pub.body.valid).toBe(true);
-    expect(Object.keys(pub.body.certificate).sort()).toEqual(
-      [
-        "courseName", "eventEndsAt", "eventLocation", "eventStartsAt", "eventTitle", "hours", "id", "issuedAt",
-        "studentName", "studentRa", "verificationCode",
-      ].sort(),
-    );
-  });
-
-  it("código inexistente não é encontrado", async () => {
-    const pub = await createClient(env).json("/verify/SFB-AAAA-BBBB");
-    expect(pub.status).toBe(404);
-    expect(pub.body.valid).toBe(false);
-  });
-
-  it("aluno não abre certificado de outro aluno", async () => {
-    const r = await coord.json(`/coord/events/${eventId}/manual`, { body: { ra: "1002" } });
-    const other = createClient(env);
-    await login(other, "1001");
-    expect((await other.json(`/certificates/${r.body.certificateId}`)).status).toBe(403);
   });
 });
 

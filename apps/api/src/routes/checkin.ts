@@ -196,7 +196,6 @@ export const checkinRoutes = new Hono<AppEnv>()
       phase: ticket.phase,
       event: eventSummary(event),
       attendance: publicAttendance(saved.attendance),
-      certificateId: saved.certificate?.id ?? null,
       location: location.ok ? { ok: true } : { ok: false, reason: location.reason },
     });
   })
@@ -269,7 +268,6 @@ export const checkinRoutes = new Hono<AppEnv>()
     return c.json({
       event: eventSummary(event),
       attendance: publicAttendance(saved.attendance),
-      certificateId: saved.certificate?.id ?? null,
       location: location.ok ? { ok: true } : { ok: false, reason: location.reason },
     });
   });

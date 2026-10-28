@@ -303,7 +303,7 @@ function ManualEntry({ eventId, onDone }: { eventId: string; onDone: () => void 
     setMessage(null);
     try {
       const r = await api<{ student: { name: string; ra: string } }>(`/coord/events/${eventId}/manual`, { body: { ra: ra.trim() } });
-      setMessage({ ok: true, text: `Presença lançada para ${r.student.name} (RA ${r.student.ra}). Certificado emitido.` });
+      setMessage({ ok: true, text: `Presença lançada para ${r.student.name} (RA ${r.student.ra}).` });
       setRa("");
       onDone();
     } catch (err) {
