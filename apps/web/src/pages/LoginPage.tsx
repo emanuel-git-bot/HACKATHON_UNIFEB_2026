@@ -53,7 +53,7 @@ export function LoginPage() {
         <Card className="w-full max-w-sm">
           <h2 className="mb-1 text-xl font-bold">Entrar</h2>
           <p className="mb-5 text-sm text-slate-500">Use seu RA e senha.</p>
-          <LoginForm onSuccess={(u) => navigate(next ?? homePathFor(u.role), { replace: true })} />
+          <LoginForm showDemoAccounts onSuccess={(u) => navigate(next ?? homePathFor(u.role), { replace: true })} />
           <p className="mt-5 text-center text-sm text-slate-600">
             Ainda não tem conta?{" "}
             <Link

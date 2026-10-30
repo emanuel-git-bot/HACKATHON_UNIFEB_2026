@@ -4,7 +4,14 @@ import { ApiError } from "../lib/api";
 import type { User } from "../lib/types";
 import { Button, ErrorBox, Field, Input } from "./ui";
 
-export function LoginForm({ onSuccess }: { onSuccess: (user: User) => void }) {
+/** Contas de demonstração do hackathon (as mesmas do README). Tirar depois da apresentação. */
+const DEMO_ACCOUNTS = [
+  { label: "Aluno", ra: "210345", password: "123456" },
+  { label: "Coordenador", ra: "coord.ec", password: "coord@2026" },
+  { label: "Admin", ra: "admin", password: "admin@sfb2026" },
+] as const;
+
+export function LoginForm({ onSuccess, showDemoAccounts = false }: { onSuccess: (user: User) => void; showDemoAccounts?: boolean }) {
   const { login } = useAuth();
   const [ra, setRa] = useState("");
   const [password, setPassword] = useState("");
@@ -26,6 +33,30 @@ export function LoginForm({ onSuccess }: { onSuccess: (user: User) => void }) {
 
   return (
     <form onSubmit={submit} className="space-y-4">
+      {showDemoAccounts && (
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Entrar como (demonstração)</p>
+          <div className="grid grid-cols-3 gap-2">
+            {DEMO_ACCOUNTS.map((account) => (
+              <button
+                key={account.label}
+                type="button"
+                onClick={() => {
+                  setRa(account.ra);
+                  setPassword(account.password);
+                  setError(null);
+                }}
+                aria-pressed={ra === account.ra}
+                className={`min-h-11 rounded-xl px-2 text-sm font-semibold ring-1 transition ${
+                  ra === account.ra ? "bg-brand-900 text-white ring-brand-900" : "bg-white text-brand-800 ring-slate-300 hover:ring-brand-500"
+                }`}
+              >
+                {account.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       <Field label="RA ou login">
         <Input
           value={ra}
