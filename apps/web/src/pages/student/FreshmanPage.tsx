@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, ChevronDown, Circle, ExternalLink, MapPin, Phone, Sparkles } from "lucide-react";
+import { CheckCircle2, ChevronDown, Circle, ExternalLink, LifeBuoy, MapPin, Phone, Sparkles } from "lucide-react";
 import { Card, PageTitle, cx } from "../../components/ui";
 
 const CHECKLIST_KEY = "campusfeb_checklist";
@@ -8,7 +8,18 @@ const CHECKLIST_KEY = "campusfeb_checklist";
 /** Primeiros passos do calouro. Conteúdo tirado do site oficial do UNIFEB. */
 const FIRST_STEPS = [
   { id: "portal", title: "Entrar no Portal do Aluno", detail: "Notas, faltas, boletos e documentos ficam lá.", href: "https://sistema.unifeb.edu.br/" },
-  { id: "email", title: "Ativar o e-mail @unifeb.edu.br", detail: "É uma conta Google: dá acesso ao Drive e às turmas. Problemas? Procure o DTI.", href: "https://mail.google.com/" },
+  {
+    id: "email",
+    title: "Entrar na conta do UNIFEB",
+    detail: "Faça login com nome.ultimosobrenome@sou.unifeb.edu.br. É uma conta Google: dá acesso ao e-mail, ao Drive e ao Classroom.",
+    href: "https://mail.google.com/",
+  },
+  {
+    id: "classroom",
+    title: "Baixar o Google Classroom",
+    detail: "Depois de entrar com a conta @sou.unifeb.edu.br, instale o app no celular: é lá que ficam as turmas, os materiais e as atividades.",
+    href: "https://classroom.google.com/",
+  },
   { id: "calendario", title: "Salvar o calendário acadêmico 2026", detail: "Provas, feriados e recessos do ano.", href: "https://www.unifeb.edu.br/uploads/arquivos/CALEND%C3%81RIO%20ACADEMICO%20-%202026.pdf" },
   { id: "sala", title: "Achar sua sala no mapa", detail: "Busque pelo número da sala ou pelo bloco.", to: "/mapa?filtro=classes" },
   { id: "biblioteca", title: "Conhecer a Biblioteca", detail: "Seg a sex, 9h às 22h. Empréstimo de livros só para alunos.", to: "/mapa?local=pl_biblioteca" },
@@ -36,7 +47,7 @@ const FAQ = [
   },
   {
     q: "Wi-Fi, e-mail ou portal não funcionam. E agora?",
-    a: "O DTI (Departamento de Tecnologia da Informação) resolve: (17) 3321-6370.",
+    a: "Abra um chamado no formulário de suporte do DTI (Departamento de Tecnologia da Informação), que é por onde a equipe de TI recebe os pedidos. Se preferir, ligue: (17) 3321-6370.",
   },
   {
     q: "Preciso de declaração de matrícula ou histórico.",
@@ -59,7 +70,7 @@ const GLOSSARY: [string, string][] = [
   ["FAB LAB", "Espaço maker com impressora 3D e corte a laser."],
   ["SESINFO", "Semana de Sistemas de Informação, com palestras e hackathon."],
   ["ENADE", "Prova nacional que avalia os cursos; é obrigatória para quem é convocado."],
-  ["TCC", "Trabalho de Conclusão de Curso."],
+  ["PI", "Projeto Integrador: o projeto prático em equipe do curso, que junta o que se aprende nas matérias."],
 ];
 
 const CONTACTS: [string, string][] = [
@@ -73,8 +84,13 @@ const CONTACTS: [string, string][] = [
   ["Central UNIFEB", "(17) 3321-6411"],
 ];
 
+/** Formulário por onde o DTI recebe os chamados (indicado pela coordenação). */
+const SUPPORT_URL = "https://dashboard-unifeb-tv.vercel.app/formulario_QR_code_suporte_UNIFEB.html";
+
 const LINKS: [string, string][] = [
   ["Portal do Aluno", "https://sistema.unifeb.edu.br/"],
+  ["Google Classroom", "https://classroom.google.com/"],
+  ["Suporte de TI (abrir chamado)", SUPPORT_URL],
   ["Site do UNIFEB", "https://www.unifeb.edu.br/"],
   ["Biblioteca online", "https://unifeb.edu.br/biblioteca"],
   ["Ouvidoria", "https://www.unifeb.edu.br/ouvidoria"],
@@ -130,7 +146,7 @@ export function FreshmanPage() {
                 </button>
                 <div className="min-w-0 flex-1">
                   <p className={cx("font-semibold", checked && "text-slate-400 line-through")}>{step.title}</p>
-                  <p className="text-sm text-slate-500">{step.detail}</p>
+                  <p className="text-sm break-words text-slate-500">{step.detail}</p>
                 </div>
                 {step.to ? (
                   <Link to={step.to} className="shrink-0 rounded-lg px-2 py-1 text-sm font-semibold text-brand-700 hover:bg-brand-50">
@@ -146,6 +162,20 @@ export function FreshmanPage() {
           })}
         </ul>
       </Card>
+
+      <a
+        href={SUPPORT_URL}
+        target="_blank"
+        rel="noreferrer"
+        className="flex min-h-14 items-center gap-3 rounded-2xl bg-brand-900 px-4 py-3 text-white shadow-sm hover:bg-brand-800"
+      >
+        <LifeBuoy className="size-6 shrink-0 text-gold-500" aria-hidden />
+        <span className="min-w-0 flex-1">
+          <span className="block font-bold">Problema com Wi-Fi, e-mail ou computador?</span>
+          <span className="block text-sm text-brand-100">Abra um chamado para o suporte de TI</span>
+        </span>
+        <ExternalLink className="size-4 shrink-0" aria-hidden />
+      </a>
 
       <section>
         <h2 className="mb-2 text-lg font-bold">Perguntas frequentes</h2>
