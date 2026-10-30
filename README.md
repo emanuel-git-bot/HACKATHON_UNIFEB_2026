@@ -8,7 +8,7 @@ O campus do UNIFEB na palma da mão. Projeto do Hackathon XXIII SESINFO, desafio
 
 | Tema do desafio | No Campus FEB |
 |---|---|
-| Localização de serviços | **Mapa** de satélite do campus: busca de sala, bloco ou serviço; "Onde estou"; "Como chegar" a pé. Também abre sem login. |
+| Localização de serviços | **Mapa** do campus em três vistas: **Mapa** (satélite ou ruas), **Blocos** (desenho estilo GPS, cada bloco numa cor) e **3D** (maquete dos prédios). Busca de sala, bloco ou serviço; "Onde estou"; "Como chegar" a pé; fotos dos locais. Também abre sem login. |
 | Calouros | **Guia do Calouro**: checklist da primeira semana, dúvidas frequentes, telefones, siglas e links oficiais |
 | Eventos | **Palestras** com check-in por QR Code dinâmico (as horas complementares somam na hora) e **jogos da Atlética** com "confirmar presença" e link pronto para os grupos de WhatsApp |
 | Grupos de estudo | **Grupos**: criar ou entrar em um grupo, com local no campus ou link online e limite de vagas |
@@ -16,7 +16,7 @@ O campus do UNIFEB na palma da mão. Projeto do Hackathon XXIII SESINFO, desafio
 | Comunicação acadêmica | **Avisos** com os banners do site do UNIFEB, comunicados da coordenação e **vagas de estágio e emprego** (empresa, prazo, link para se candidatar) |
 | Acessibilidade | Banheiros acessíveis, rampas e vagas PcD no mapa; letras maiores e alto contraste; relato de problemas |
 
-A coordenação publica avisos e vagas e gerencia as palestras e o Telão do QR. A **Atlética** tem conta própria para criar jogos e festas (sem horas complementares), mandar o link no WhatsApp e ver a lista de quem confirmou. O admin cuida de cursos, coordenadores, contas da Atlética, do **editor do mapa** e dos **relatos de acessibilidade**. Os banners do site do UNIFEB são copiados sozinhos a cada 6 horas (o admin também pode forçar em Avisos → "Atualizar do site").
+A coordenação publica avisos e vagas e gerencia as palestras e o Telão do QR. A **Atlética** tem conta própria para criar jogos e festas (sem horas complementares), mandar o link no WhatsApp e ver a lista de quem confirmou. O admin cuida de cursos, coordenadores, contas da Atlética, do **editor do mapa** (com até 6 fotos por local, tiradas na hora pelo celular) e dos **relatos de acessibilidade**. Os banners do site do UNIFEB são copiados sozinhos a cada 6 horas (o admin também pode forçar em Avisos → "Atualizar do site").
 
 ## Contas de demonstração
 
@@ -31,7 +31,7 @@ A coordenação publica avisos e vagas e gerencia as palestras e o Telão do QR.
 
 **Troque as senhas de demo depois do hackathon.** Elas estão neste arquivo e em `apps/api/scripts/seed.ts`.
 
-> Os nomes de blocos e salas do mapa são **exemplos**. As posições vêm dos prédios do campus no OpenStreetMap. Corrija pelo **Admin → Mapa** depois de conferir no campus. Os telefones, o horário da biblioteca e os setores (Pró-Aluno, NAPE, NEU, DTI...) vêm do site oficial do UNIFEB.
+> Os nomes de blocos e salas do mapa são **exemplos**. As posições e o desenho das vistas Blocos e 3D vêm dos prédios do campus no OpenStreetMap. O desenho já vem pronto em `apps/web/src/data/campus-osm.json`; para baixar de novo, rode `node apps/web/scripts/fetch-campus-osm.mjs`. O nome e a cor de cada prédio saem dos locais cadastrados. Corrija pelo **Admin → Mapa** depois de conferir no campus. Os telefones, o horário da biblioteca e os setores (Pró-Aluno, NAPE, NEU, DTI...) vêm do site oficial do UNIFEB.
 
 ## Estrutura
 
@@ -74,11 +74,11 @@ Abra http://localhost:8788. Para editar o front com recarga automática, rode ta
 npm test
 ```
 
-São 117 testes: as regras do `packages/core` e a API inteira contra um SQLite em memória (login, check-in e suas travas, mapa, grupos, avisos e vagas, materiais, Atlética, banners e relatos de acessibilidade).
+São 139 testes: as regras do `packages/core` (incluindo o agrupamento dos blocos do mapa) e a API inteira contra um SQLite em memória (login, check-in e suas travas, mapa e fotos dos locais, grupos, avisos e vagas, materiais, Atlética, banners e relatos de acessibilidade).
 
 ## Deploy (Cloudflare)
 
-Worker `campusfeb` com banco D1 `campusfeb`, separados do SyncFEB do projeto 1.
+Worker `campusfeb` com banco D1 `campusfeb`, separados do SyncFEB do projeto 1. As fotos dos locais ficam no KV `campusfeb-photos` (binding `PHOTOS`); o R2 seria o lugar natural, mas não está ativado na conta.
 
 ```bash
 npm run deploy

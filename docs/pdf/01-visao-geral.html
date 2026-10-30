@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>Campus FEB — Visão geral do projeto</title><link rel="stylesheet" href="doc.css"></head>
+<body>
+
+<section class="cover">
+  <img class="logo" src="icon.svg" alt="">
+  <h1>Campus <span class="gold">FEB</span></h1>
+  <div class="sub">O campus do UNIFEB na palma da mão</div>
+  <div class="sub">Visão geral do projeto</div>
+  <div class="meta">
+    Hackathon XXIII SESINFO · UNIFEB — Barretos/SP<br>
+    Desafio: <b>Campus Inteligente &amp; Vida Universitária</b><br>
+    Apresentação: 30/10/2026<br><br>
+    Acesse: <b>https://campusfeb.roqueemanuel2018.workers.dev</b>
+  </div>
+</section>
+
+<h2>1. Resumo</h2>
+<p>O <b>Campus FEB</b> é um aplicativo web (funciona no navegador e pode ser instalado no celular como app) que reúne, num lugar só, o que o aluno do UNIFEB precisa no dia a dia: achar salas e serviços no campus, registrar presença em palestras e somar horas complementares, encontrar grupos de estudo, receber avisos e vagas de estágio, compartilhar materiais, acompanhar os jogos da Atlética e ter um guia para os primeiros dias.</p>
+<div class="box"><b>Em uma frase:</b> menos atrito na vida universitária, do calouro perdido no primeiro dia ao veterano que precisa fechar as horas complementares.</div>
+
+<h2>2. O problema</h2>
+<ul>
+  <li><b>Calouros se perdem no campus:</b> blocos, salas, biblioteca, secretaria e setores de atendimento ficam espalhados, e não há um mapa digital pensado para o aluno.</li>
+  <li><b>Informação espalhada:</b> avisos chegam por grupos de WhatsApp, Instagram e mural físico; vagas de estágio e prazos se perdem.</li>
+  <li><b>Horas complementares sem visibilidade:</b> o aluno nem sempre sabe quantas horas já tem, e a presença em palestras ainda depende de lista de papel.</li>
+  <li><b>Grupos de estudo e materiais</b> dependem de quem conhece quem.</li>
+  <li><b>Acessibilidade:</b> não há um lugar que mostre banheiros acessíveis, rampas e vagas PcD, nem um canal simples para avisar que uma rampa está bloqueada.</li>
+</ul>
+
+<h2>3. A solução por tema do desafio</h2>
+<table>
+  <tr><th style="width:28%">Tema do desafio</th><th>No Campus FEB</th></tr>
+  <tr><td>Localização de serviços</td><td><b>Mapa do campus</b> em três vistas: <b>Mapa</b> (satélite ou ruas), <b>Blocos</b> (desenho estilo GPS, cada bloco numa cor) e <b>3D</b> (maquete dos prédios). Busca por sala, bloco ou serviço, "Onde estou", "Como chegar" a pé e <b>fotos dos locais</b>. Abre sem login.</td></tr>
+  <tr><td>Integração de calouros</td><td><b>Guia do Calouro</b>: checklist da primeira semana, dúvidas frequentes, telefones, siglas e links oficiais do UNIFEB.</td></tr>
+  <tr><td>Eventos</td><td><b>Palestras com check-in por QR Code dinâmico</b> (as horas complementares somam na hora) e <b>jogos e festas da Atlética</b> com "confirmar presença" e link pronto para o WhatsApp.</td></tr>
+  <tr><td>Grupos de estudo</td><td>Criar ou entrar em grupos, com local no campus ou link online, limite de vagas e opção "só meu curso".</td></tr>
+  <tr><td>Compartilhamento de recursos</td><td><b>Materiais</b>: resumos, apostilas, links e livros para emprestar.</td></tr>
+  <tr><td>Comunicação acadêmica</td><td><b>Avisos</b> com os banners do site do UNIFEB, comunicados da coordenação e <b>vagas de estágio e emprego</b> com empresa, prazo e link.</td></tr>
+  <tr><td>Acessibilidade</td><td>Banheiros acessíveis, rampas e vagas PcD no mapa; letras maiores, alto contraste e menos animações; <b>relato de problemas</b> que o admin resolve.</td></tr>
+</table>
+
+<h2>4. Quem usa e o que cada um faz</h2>
+<div class="grid2">
+  <div class="card"><h3>Aluno</h3><ul>
+    <li>Tela inicial com busca rápida, horas, avisos, próximos eventos e grupos.</li>
+    <li>Mapa, grupos, materiais, avisos, acessibilidade e guia do calouro.</li>
+    <li>Faz check-in nas palestras pelo QR e acompanha as horas.</li>
+  </ul></div>
+  <div class="card"><h3>Coordenador</h3><ul>
+    <li>Cria palestras e escolhe o modo de presença (entrada, saída, entrada + saída ou palavra-chave).</li>
+    <li>Projeta o <b>Telão do QR</b>, revisa presenças suspeitas, lança presença manual e imprime lista.</li>
+    <li>Publica avisos e vagas para o próprio curso.</li>
+  </ul></div>
+  <div class="card"><h3>Atlética</h3><ul>
+    <li>Conta própria para criar jogos e festas (sem horas complementares).</li>
+    <li>Gera link público e mensagem pronta para os grupos de WhatsApp.</li>
+    <li>Vê a lista de quem confirmou presença.</li>
+  </ul></div>
+  <div class="card"><h3>Admin</h3><ul>
+    <li>Cursos, coordenadores e contas da Atlética.</li>
+    <li><b>Editor do mapa</b>: cadastra locais clicando no mapa e envia até 6 fotos por local, tiradas pelo celular.</li>
+    <li>Resolve os relatos de acessibilidade e atualiza os banners do site.</li>
+  </ul></div>
+</div>
+
+<h2>5. Destaques</h2>
+<h3>Check-in que não dá para burlar facilmente</h3>
+<ul>
+  <li>O QR projetado no telão <b>muda a cada poucos segundos</b>: foto do QR mandada no grupo não funciona depois.</li>
+  <li>A presença confere <b>local</b> (GPS dentro do raio do evento ou Wi-Fi da faculdade) e <b>aparelho</b> (um aparelho não marca dois alunos).</li>
+  <li>Se a localização falhar, a presença fica como <b>suspeita</b> e o coordenador confirma ou recusa; para quem está sem celular há lista impressa e lançamento manual.</li>
+</ul>
+<h3>Mapa feito para o campus real</h3>
+<ul>
+  <li>Os prédios vêm do OpenStreetMap; o nome e a cor de cada bloco saem dos locais cadastrados, então corrigir um local no editor corrige o desenho.</li>
+  <li>Vista 3D com a altura dos prédios estimada pelos andares informados, baixada só quando o aluno escolhe (não pesa para quem não usa).</li>
+  <li>Locais já com fotos: Biblioteca, Teatro Jorge Andrade e a Entrada de carros (ao lado do shopping).</li>
+</ul>
+<h3>Leve, rápido e barato</h3>
+<ul>
+  <li>Roda na rede da Cloudflare, perto do usuário, com custo zero no plano gratuito para o volume de uma faculdade.</li>
+  <li>Funciona nos dados móveis e pode ser instalado na tela inicial do celular (Android e iPhone).</li>
+</ul>
+
+<h2>6. Números</h2>
+<table>
+  <tr><th>Item</th><th>Valor</th></tr>
+  <tr><td>Locais cadastrados no mapa</td><td>41 (blocos, salas, serviços, banheiros, rampas, vagas PcD, entradas)</td></tr>
+  <tr><td>Prédios desenhados (OpenStreetMap)</td><td>47, agrupados em 5 blocos e 9 marcos (biblioteca, teatro, cantina...)</td></tr>
+  <tr><td>Vistas do mapa</td><td>3 (Mapa, Blocos, 3D)</td></tr>
+  <tr><td>Perfis de acesso</td><td>4 (aluno, coordenador, Atlética, admin)</td></tr>
+  <tr><td>Testes automatizados</td><td>139 (regras de negócio e API inteira)</td></tr>
+  <tr><td>Custo de hospedagem</td><td>R$ 0 no plano gratuito da Cloudflare</td></tr>
+</table>
+
+<h2>7. Como acessar</h2>
+<div class="grid2">
+  <div>
+    <p><b>Site:</b> https://campusfeb.roqueemanuel2018.workers.dev</p>
+    <p><b>Mapa público (sem login):</b> /mapa-publico</p>
+    <table>
+      <tr><th>Perfil</th><th>Login</th><th>Senha</th></tr>
+      <tr><td>Jurados</td><td><code>jurado1</code> … <code>jurado10</code></td><td><code>123456</code></td></tr>
+      <tr><td>Alunos de exemplo</td><td><code>210345</code>, <code>210812</code>, <code>220117</code></td><td><code>123456</code></td></tr>
+    </table>
+    <p class="muted">Contas de demonstração; as senhas serão trocadas depois do hackathon.</p>
+  </div>
+  <div style="text-align:center"><img class="qr" src="qr-site.svg" alt="QR Code do site"><br><span class="muted">Aponte a câmera para abrir</span></div>
+</div>
+
+<h2>8. Próximos passos</h2>
+<ul>
+  <li>Conferir no campus os nomes reais de blocos e salas e tirar fotos próprias de cada prédio (hoje os nomes de salas são exemplos e parte das fotos veio do Google Maps).</li>
+  <li>Validar as horas complementares com a coordenação e integrar o regulamento (categorias e limites).</li>
+  <li>Validação de certificados de cursos externos com IA (Alura, Udemy…), que ficou fora da demo para não gerar custo.</li>
+  <li>Notificações no celular para avisos urgentes e lembrete de eventos.</li>
+  <li>Rotas internas a pé entre blocos, com caminho acessível.</li>
+</ul>
+
+</body></html>

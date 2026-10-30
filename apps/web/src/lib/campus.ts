@@ -44,9 +44,22 @@ export interface Place {
   accessible: boolean;
   openingHours: string | null;
   phone: string | null;
+  photos: PlacePhoto[];
+}
+
+export interface PlacePhoto {
+  id: string;
+  caption: string | null;
+  width: number | null;
+  height: number | null;
+  url: string;
+  thumbUrl: string;
 }
 
 export const CAMPUS_CENTER = { lat: -20.5745, lng: -48.5617 };
+
+/** Imagens de satélite da Esri (sem dados acima do zoom 18 nesta região). */
+export const SATELLITE_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 export const PLACE_INFO: Record<PlaceCategory, { label: string; icon: LucideIcon; color: string }> = {
   block: { label: "Bloco", icon: Building2, color: "#1b2a63" },
@@ -84,7 +97,7 @@ export function placeSubtitle(p: Place): string {
 }
 
 /** Rota a pé no Google Maps a partir de onde o aluno está. */
-export const walkingRouteUrl = (p: Place) =>
+export const walkingRouteUrl = (p: { lat: number; lng: number }) =>
   `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`;
 
 /** Mesma regra do core: sem acento, sem caixa, todas as palavras em qualquer ordem. */

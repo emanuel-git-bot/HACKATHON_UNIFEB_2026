@@ -11,6 +11,8 @@ export interface SessionUser {
 
 export interface Bindings {
   DB: D1Database;
+  /** Arquivos das fotos dos locais (o R2 não está ativado na conta; o KV atende bem a este volume). */
+  PHOTOS: KVNamespace;
   /** Iterações do PBKDF2 para senhas novas (padrão no core). */
   PBKDF2_ITERATIONS?: string;
 }

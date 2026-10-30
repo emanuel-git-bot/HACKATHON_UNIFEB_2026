@@ -10,6 +10,7 @@ import {
 import { currentUser, requireRole } from "../lib/auth";
 import { ApiError, forbidden, notFound, parseBody } from "../lib/http";
 import type { AppEnv, SessionUser } from "../types";
+import { deletePlacePhotos, photosByPlace } from "./photos";
 
 const optionalText = z
   .string()
@@ -74,8 +75,11 @@ const publicPlace = (r: PlaceRow) => ({
 /** O mapa é público: o calouro consulta antes mesmo de ter conta. */
 export const placeRoutes = new Hono<AppEnv>()
   .get("/", async (c) => {
-    const rows = await c.env.DB.prepare("SELECT * FROM places ORDER BY name").all<PlaceRow>();
-    return c.json({ places: rows.results.map(publicPlace) });
+    const [rows, photos] = await Promise.all([
+      c.env.DB.prepare("SELECT * FROM places ORDER BY name").all<PlaceRow>(),
+      photosByPlace(c.env.DB),
+    ]);
+    return c.json({ places: rows.results.map((r) => ({ ...publicPlace(r), photos: photos.get(r.id) ?? [] })) });
   })
 
   .post("/", requireRole("admin"), async (c) => {
@@ -88,7 +92,7 @@ export const placeRoutes = new Hono<AppEnv>()
       .bind(id, b.name, b.category, b.description, b.building, b.floor, b.lat, b.lng, b.accessible ? 1 : 0, b.openingHours, b.phone, Date.now())
       .run();
     const row = await c.env.DB.prepare("SELECT * FROM places WHERE id = ?").bind(id).first<PlaceRow>();
-    return c.json({ place: publicPlace(row!) }, 201);
+    return c.json({ place: { ...publicPlace(row!), photos: [] } }, 201);
   })
 
   .put("/:id", requireRole("admin"), async (c) => {
@@ -100,12 +104,15 @@ export const placeRoutes = new Hono<AppEnv>()
       .bind(b.name, b.category, b.description, b.building, b.floor, b.lat, b.lng, b.accessible ? 1 : 0, b.openingHours, b.phone, c.req.param("id"))
       .run();
     if (!r.meta.changes) throw notFound("Local");
-    const row = await c.env.DB.prepare("SELECT * FROM places WHERE id = ?").bind(c.req.param("id")).first<PlaceRow>();
-    return c.json({ place: publicPlace(row!) });
+    const id = c.req.param("id");
+    const row = await c.env.DB.prepare("SELECT * FROM places WHERE id = ?").bind(id).first<PlaceRow>();
+    const photos = await photosByPlace(c.env.DB, id);
+    return c.json({ place: { ...publicPlace(row!), photos: photos.get(id) ?? [] } });
   })
 
   .delete("/:id", requireRole("admin"), async (c) => {
     const id = c.req.param("id");
+    await deletePlacePhotos(c.env, id);
     await c.env.DB.prepare("UPDATE study_groups SET place_id = NULL WHERE place_id = ?").bind(id).run();
     await c.env.DB.prepare("UPDATE accessibility_reports SET place_id = NULL WHERE place_id = ?").bind(id).run();
     const r = await c.env.DB.prepare("DELETE FROM places WHERE id = ?").bind(id).run();

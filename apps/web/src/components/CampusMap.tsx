@@ -1,24 +1,20 @@
-import { createElement, useEffect, useRef } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
+import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { CAMPUS_CENTER, PLACE_INFO, type Place, type PlaceCategory } from "../lib/campus";
+import { CAMPUS_CENTER, SATELLITE_TILES, type Place, type PlaceCategory } from "../lib/campus";
+import { placePinHtml } from "./mapPins";
 
-const SATELLITE = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 const STREETS = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 const iconCache = new Map<string, L.DivIcon>();
 
-function pinIcon(category: PlaceCategory, selected: boolean): L.DivIcon {
-  const key = `${category}:${selected}`;
+export function pinIcon(category: PlaceCategory, selected: boolean, size = category === "block" ? 34 : 28): L.DivIcon {
+  const key = `${category}:${selected}:${size}`;
   const cached = iconCache.get(key);
   if (cached) return cached;
-  const info = PLACE_INFO[category] ?? PLACE_INFO.block;
-  const size = category === "block" ? 34 : 28;
-  const svg = renderToStaticMarkup(createElement(info.icon, { size: size * 0.55, strokeWidth: 2.4, "aria-hidden": true }));
   const icon = L.divIcon({
     className: "",
-    html: `<div class="campus-pin${selected ? " is-selected" : ""}" style="width:${size}px;height:${size}px;background:${info.color}">${svg}</div>`,
+    html: placePinHtml(category, size, selected),
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
   });
@@ -86,7 +82,7 @@ export function CampusMap({
     if (!map) return;
     tilesRef.current?.remove();
     tilesRef.current = satellite
-      ? L.tileLayer(SATELLITE, { maxZoom: 20, maxNativeZoom: 18, attribution: "Imagens © Esri" })
+      ? L.tileLayer(SATELLITE_TILES, { maxZoom: 20, maxNativeZoom: 18, attribution: "Imagens © Esri" })
       : L.tileLayer(STREETS, { maxZoom: 20, maxNativeZoom: 19, attribution: "© OpenStreetMap" });
     tilesRef.current.addTo(map);
   }, [satellite]);

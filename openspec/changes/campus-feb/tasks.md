@@ -34,6 +34,16 @@
 - [x] 4.4 Papel Atlética: jogos com confirmação de presença, link de WhatsApp e lista de confirmados
 - [x] 4.5 Testes (`test/social.test.ts` e regras do core)
 
+## 6. Novas vistas do mapa e fotos dos locais
+
+- [x] 6.1 Desenho do campus tirado do OpenStreetMap (`apps/web/scripts/fetch-campus-osm.mjs` gera `src/data/campus-osm.json`)
+- [x] 6.2 Regra no core que dá nome aos prédios a partir dos locais e junta os prédios de um mesmo bloco (`campus-map.ts`, com testes)
+- [x] 6.3 Vista "Blocos": campus desenhado como num GPS, um bloco por cor, etiquetas, legenda e ficha do bloco
+- [x] 6.4 Vista "3D": maquete com MapLibre sobre o satélite, baixada só quando o aluno escolhe; botões Girar e De cima
+- [x] 6.5 Fotos opcionais dos locais: o admin envia (o navegador reduz antes), o aluno vê na ficha do local e em tela cheia
+- [x] 6.6 Testes (`test/photos.test.ts`, `campus-map.test.ts`, `photos.test.ts`)
+- [x] 6.7 Publicar: migração `0004_place_photos.sql` em produção e deploy (KV `campusfeb-photos`)
+
 ## 5. Entrega
 
 - [x] 5.1 Worker e D1 separados (`campusfeb`) e deploy

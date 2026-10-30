@@ -19,5 +19,7 @@
       "migrations_dir": "migrations"
     }
   ],
+  // Arquivos das fotos dos locais do mapa (o R2 não está ativado nesta conta).
+  "kv_namespaces": [{ "binding": "PHOTOS", "id": "ce3499c021df4ade8afaacfc37d88ae9" }],
   "observability": { "enabled": true }
 }

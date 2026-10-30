@@ -47,7 +47,23 @@ export function createTestDb(): D1Database {
   return d1 as unknown as D1Database;
 }
 
+/** KV em memória com a parte da API usada pelas fotos; `keys()` ajuda a conferir o que sobrou. */
+export function createTestKv() {
+  const store = new Map<string, { value: ArrayBuffer; metadata: unknown }>();
+  const kv = {
+    put: async (key: string, value: ArrayBuffer, options?: { metadata?: unknown }) => {
+      store.set(key, { value, metadata: options?.metadata ?? null });
+    },
+    getWithMetadata: async (key: string) => ({ value: store.get(key)?.value ?? null, metadata: store.get(key)?.metadata ?? null }),
+    delete: async (key: string) => {
+      store.delete(key);
+    },
+  };
+  return { kv: kv as unknown as KVNamespace, keys: () => [...store.keys()] };
+}
+
 export interface TestClient {
+  /** `body` em FormData vai como multipart; qualquer outro valor vai como JSON. */
   request: (path: string, init?: { method?: string; body?: unknown; ip?: string }) => Promise<Response>;
   json: <T = any>(path: string, init?: { method?: string; body?: unknown; ip?: string }) => Promise<{ status: number; body: T }>;
   /** Simula outro navegador no mesmo aparelho: mantém o cookie do aparelho e apaga o de sessão. */
@@ -55,17 +71,19 @@ export interface TestClient {
 }
 
 /** Cliente que guarda cookies como um navegador (cada cliente = um aparelho). */
-export function createClient(env: { DB: D1Database }): TestClient {
+export function createClient(env: { DB: D1Database; PHOTOS?: KVNamespace }): TestClient {
   const app = createApp();
   const cookies = new Map<string, string>();
 
   const request: TestClient["request"] = async (path, init = {}) => {
     const headers = new Headers({ "CF-Connecting-IP": init.ip ?? "177.10.20.30" });
-    if (init.body !== undefined) headers.set("Content-Type", "application/json");
+    const isForm = init.body instanceof FormData;
+    if (init.body !== undefined && !isForm) headers.set("Content-Type", "application/json");
     if (cookies.size) headers.set("Cookie", [...cookies].map(([k, v]) => `${k}=${v}`).join("; "));
+    const body = init.body === undefined ? undefined : isForm ? (init.body as FormData) : JSON.stringify(init.body);
     const res = await app.request(
       `https://syncfeb.test/api${path}`,
-      { method: init.method ?? (init.body !== undefined ? "POST" : "GET"), headers, body: init.body !== undefined ? JSON.stringify(init.body) : undefined },
+      { method: init.method ?? (init.body !== undefined ? "POST" : "GET"), headers, body },
       env,
     );
     for (const raw of (res.headers as unknown as globalThis.Headers & { getSetCookie(): string[] }).getSetCookie()) {

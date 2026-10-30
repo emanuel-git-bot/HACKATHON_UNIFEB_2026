@@ -1,9 +1,11 @@
-import { useState, type FormEvent } from "react";
-import { MousePointerClick, Plus, Save, Trash2 } from "lucide-react";
+import { useRef, useState, type FormEvent } from "react";
+import { ImagePlus, MousePointerClick, Plus, Save, Trash2 } from "lucide-react";
+import { PLACE_PHOTO_LIMITS } from "@syncfeb/core";
 import { CampusMap } from "../../components/CampusMap";
 import { Button, Card, ErrorBox, Field, Input, PageTitle, Select, Textarea, cx } from "../../components/ui";
 import { ApiError, api } from "../../lib/api";
-import { CAMPUS_CENTER, PLACE_INFO, matchesSearch, placeSubtitle, type Place, type PlaceCategory } from "../../lib/campus";
+import { CAMPUS_CENTER, PLACE_INFO, matchesSearch, placeSubtitle, type Place, type PlaceCategory, type PlacePhoto } from "../../lib/campus";
+import { preparePhoto } from "../../lib/image";
 import { useApi } from "../../lib/useApi";
 
 type Draft = Omit<Place, "id"> & { id: string | null };
@@ -20,6 +22,7 @@ const blank = (): Draft => ({
   accessible: false,
   openingHours: "",
   phone: "",
+  photos: [],
 });
 
 /** Admin cadastra e posiciona os locais clicando no mapa. */
@@ -38,7 +41,8 @@ export function PlacesAdminPage() {
     if (!draft) return;
     setBusy(true);
     setFormError(null);
-    const { id, ...body } = draft;
+    // As fotos têm envio próprio (PhotoManager); o formulário só manda os dados do local.
+    const { id, photos: _photos, ...body } = draft;
     try {
       await api(id ? `/places/${id}` : "/places", { method: id ? "PUT" : "POST", body });
       setDraft(null);
@@ -127,6 +131,11 @@ export function PlacesAdminPage() {
                 <input type="checkbox" className="size-5 accent-brand-800" checked={draft.accessible} onChange={(e) => set({ accessible: e.target.checked })} />
                 Local acessível (cadeirantes)
               </label>
+              {draft.id ? (
+                <PhotoManager key={draft.id} placeId={draft.id} initial={draft.photos} onChanged={() => void reload()} />
+              ) : (
+                <p className="text-xs text-slate-500">Salve o local para poder adicionar fotos.</p>
+              )}
               <p className="text-xs text-slate-500">
                 Posição: {draft.lat.toFixed(5)}, {draft.lng.toFixed(5)}
               </p>
@@ -171,5 +180,105 @@ export function PlacesAdminPage() {
         )}
       </div>
     </div>
+  );
+}
+
+/** Fotos opcionais do local: o navegador reduz cada uma antes de enviar. */
+function PhotoManager({ placeId, initial, onChanged }: { placeId: string; initial: PlacePhoto[]; onChanged: () => void }) {
+  const [photos, setPhotos] = useState(initial);
+  const [caption, setCaption] = useState("");
+  const [progress, setProgress] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const room = PLACE_PHOTO_LIMITS.perPlace - photos.length;
+
+  async function upload(files: FileList | null) {
+    if (!files?.length) return;
+    setError(null);
+    const batch = [...files].slice(0, room);
+    try {
+      for (const [i, file] of batch.entries()) {
+        setProgress(batch.length > 1 ? `Enviando ${i + 1} de ${batch.length}...` : "Enviando...");
+        const prepared = await preparePhoto(file);
+        const form = new FormData();
+        form.set("placeId", placeId);
+        form.set("photo", prepared.photo, "foto.jpg");
+        form.set("thumb", prepared.thumb, "miniatura.jpg");
+        form.set("width", String(prepared.width));
+        form.set("height", String(prepared.height));
+        if (caption.trim()) form.set("caption", caption.trim());
+        const r = await api<{ photo: PlacePhoto }>("/place-photos", { body: form });
+        setPhotos((list) => [...list, r.photo]);
+      }
+      if (files.length > batch.length) setError(`Cada local tem até ${PLACE_PHOTO_LIMITS.perPlace} fotos; as demais ficaram de fora.`);
+      setCaption("");
+      onChanged();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não deu para enviar a foto.");
+    } finally {
+      setProgress(null);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  async function remove(photo: PlacePhoto, n: number) {
+    if (!confirm(`Apagar a foto ${n} deste local?`)) return;
+    setError(null);
+    try {
+      await api(`/place-photos/${photo.id}`, { method: "DELETE" });
+      setPhotos((list) => list.filter((p) => p.id !== photo.id));
+      onChanged();
+    } catch (err) {
+      setError((err as ApiError).message);
+    }
+  }
+
+  return (
+    <fieldset className="space-y-2 rounded-xl border border-slate-200 p-3">
+      <legend className="px-1 text-sm font-semibold text-slate-700">Fotos (opcional)</legend>
+      {photos.length > 0 ? (
+        <ul className="grid grid-cols-3 gap-2">
+          {photos.map((photo, i) => (
+            <li key={photo.id} className="relative">
+              <img
+                src={photo.thumbUrl}
+                alt={photo.caption ?? `Foto ${i + 1}`}
+                className="aspect-square w-full rounded-lg object-cover ring-1 ring-slate-200"
+              />
+              <button
+                type="button"
+                onClick={() => void remove(photo, i + 1)}
+                className="absolute right-1 top-1 flex size-8 items-center justify-center rounded-full bg-white/90 text-red-600 shadow hover:bg-white"
+                aria-label={`Apagar foto ${i + 1}`}
+              >
+                <Trash2 className="size-4" aria-hidden />
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-xs text-slate-500">Uma foto da fachada ou da porta ajuda o calouro a reconhecer o lugar.</p>
+      )}
+      {room > 0 && (
+        <>
+          <Input
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+            maxLength={PLACE_PHOTO_LIMITS.maxCaption}
+            placeholder="Legenda (opcional), ex.: entrada pela rampa"
+            aria-label="Legenda das próximas fotos"
+          />
+          <input ref={inputRef} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} onChange={(e) => void upload(e.target.files)} />
+          <Button type="button" variant="secondary" loading={progress !== null} onClick={() => inputRef.current?.click()} className="w-full">
+            {progress === null && <ImagePlus className="size-4" aria-hidden />}
+            {progress ?? "Adicionar fotos"}
+          </Button>
+        </>
+      )}
+      <p className="text-xs text-slate-500">
+        {photos.length} de {PLACE_PHOTO_LIMITS.perPlace} fotos. Pode tirar na hora pelo celular.
+      </p>
+      {error && <ErrorBox message={error} />}
+    </fieldset>
   );
 }

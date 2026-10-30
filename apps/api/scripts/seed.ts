@@ -81,7 +81,7 @@ const lines: string[] = [
   "-- Dados de demonstração (gerado por scripts/seed.ts)",
   "DELETE FROM social_event_rsvps; DELETE FROM social_events; DELETE FROM site_banners;",
   "DELETE FROM accessibility_reports; DELETE FROM resources; DELETE FROM announcement_reads; DELETE FROM announcements;",
-  "DELETE FROM study_group_members; DELETE FROM study_groups; DELETE FROM places;",
+  "DELETE FROM study_group_members; DELETE FROM study_groups; DELETE FROM place_photos; DELETE FROM places;",
   "DELETE FROM checkin_attempts; DELETE FROM attendance; DELETE FROM scan_tickets;",
   "DELETE FROM registrations; DELETE FROM events; DELETE FROM sessions; DELETE FROM login_attempts;",
   "DELETE FROM users; DELETE FROM courses;",

@@ -73,3 +73,6 @@ Legenda: `[ ]` aberta · `[x]` respondida
 - **Decisões (28/10):** não há elevadores nem minicursos. Só palestras valem horas. A Atlética tem conta própria para jogos com "confirmar presença" (sem horas) e link para WhatsApp. Coordenadores publicam vagas de estágio e emprego nos avisos. Os banners do site do UNIFEB aparecem em Avisos.
 - [ ] **P24.** Qual é o nome oficial da Atlética e quem vai usar a conta dela? Hoje a conta de demo se chama "Atlética Cerberus".
 - [ ] **P25.** A Atlética joga em quadra própria no campus ou em ginásio de fora? O mapa tem uma "Quadra poliesportiva" de exemplo.
+- **Decisões (28/10, noite):** o mapa ganha as vistas Blocos (estilo GPS) e 3D sem mudar a vista original. Os locais podem ter fotos (opcional), enviadas pelo admin.
+- [ ] **P26.** Quem tira as fotos dos prédios e salas para a demo? Sugestão: tirar pelo celular no próprio Admin → Mapa (fachada de cada bloco, biblioteca, cantina, banheiros acessíveis).
+- [ ] **P27.** Quantos andares tem cada bloco? O 3D estima a altura pelos andares informados nos locais (ex.: "2º andar"); um prédio sem salas cadastradas aparece com altura padrão.

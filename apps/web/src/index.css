@@ -111,3 +111,80 @@ html.a11y-reduce-motion *::after {
 .campus-label::before {
   display: none;
 }
+
+/* Vista "Blocos" (desenho do campus) e etiquetas compartilhadas com o 3D */
+.blocks-map {
+  background: #ebe8e1;
+}
+.block-shape {
+  filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.28));
+}
+.block-tag-anchor .block-tag {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+}
+.block-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 170px;
+  padding: 2px 9px 2px 2px;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.95);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.block-tag.is-selected {
+  outline: 3px solid #e8c25a;
+}
+.block-tag-badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--c);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+.block-tag-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Afastado, só a letra; no meio do caminho, os prédios de serviço também ficam só com o ícone. */
+.zoom-far .block-tag,
+.zoom-mid .block-tag.is-landmark {
+  padding: 2px;
+}
+.zoom-far .block-tag-name,
+.zoom-mid .block-tag.is-landmark .block-tag-name {
+  display: none;
+}
+
+/* Vista "3D" (MapLibre) */
+.maplibre-html-marker {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+.user-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  border: 3px solid #fff;
+  background: #2563eb;
+  box-shadow: 0 0 0 6px rgb(37 99 235 / 0.2);
+}

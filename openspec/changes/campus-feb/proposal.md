@@ -13,7 +13,10 @@ A conversa com o coordenador mostrou que a lista de presença já tem uma soluç
   - filtros (blocos e salas, serviços, comer, banheiros, acessibilidade);
   - "Onde estou" e "Como chegar" (rota a pé);
   - versão pública sem login;
-  - o admin cadastra e posiciona os locais clicando no mapa.
+  - o admin cadastra e posiciona os locais clicando no mapa;
+  - três vistas, escolhidas num seletor acima do mapa: **Mapa** (a original, satélite ou ruas, sem mudanças), **Blocos** (o campus desenhado como num GPS, cada bloco numa cor, com legenda e ficha do bloco) e **3D** (maquete dos prédios sobre o satélite, com giro e inclinação);
+  - o nome e a cor de cada prédio nas vistas Blocos e 3D vêm dos locais cadastrados, então corrigir um local no editor também corrige o desenho;
+  - **fotos opcionais** de cada local (até 6), enviadas pelo admin e mostradas na ficha do local, com tela cheia.
 - **Grupos de estudo**: o aluno cria grupos (matéria, data, local no campus ou link online, vagas, opção "só meu curso"), entra e sai. Grupo lotado ou com encontro já passado bloqueia a entrada.
 - **Avisos**:
   - o coordenador publica para o próprio curso e o admin para o campus todo ou para um curso;
@@ -48,6 +51,7 @@ A conversa com o coordenador mostrou que a lista de presença já tem uma soluç
 - `freshman-guide`: guia do calouro (conteúdo estático).
 - `athletics-events`: eventos da Atlética com confirmação de presença e compartilhamento no WhatsApp.
 - `site-banners`: cópia periódica dos banners do site do UNIFEB.
+- `place-photos`: fotos opcionais dos locais do mapa, enviadas pelo admin e públicas como o mapa.
 
 ### Modified Capabilities
 - `certificates`: removida. A soma de horas passa para `events` (`/me/hours`).
@@ -58,3 +62,5 @@ A conversa com o coordenador mostrou que a lista de presença já tem uma soluç
 - Core: `packages/core/src/campus.ts` (categorias, regra de entrada em grupo, busca sem acento).
 - Web: Leaflet com tiles da Esri (satélite) e do OpenStreetMap; novas páginas em `apps/web/src/pages`.
 - Dados de demo em `apps/api/scripts/seed-campus.ts`: os nomes de blocos e salas são exemplos, e as posições vêm dos prédios do OpenStreetMap.
+- Vistas do mapa: `packages/core/src/campus-map.ts` (geometria e agrupamento dos blocos), `apps/web/src/data/campus-osm.json` (desenho do campus, ODbL, com atribuição no mapa), `BlocksMap.tsx` (Leaflet sem imagens) e `Campus3DMap.tsx` (MapLibre GL, carregado sob demanda). A altura dos prédios no 3D é estimada pelos andares informados nos locais.
+- Fotos: migração `0004_place_photos.sql` (dados) e KV `campusfeb-photos` (binding `PHOTOS`, arquivos). O ideal seria o R2, mas ele não está ativado na conta; o KV atende a este volume (até 6 fotos por local, cerca de 300 KB cada).

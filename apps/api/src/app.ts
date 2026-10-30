@@ -9,6 +9,7 @@ import { announcementRoutes, groupRoutes, placeRoutes, reportRoutes, resourceRou
 import { checkinRoutes } from "./routes/checkin";
 import { coordinatorRoutes } from "./routes/coordinator";
 import { eventRoutes, meRoutes } from "./routes/events";
+import { photoRoutes } from "./routes/photos";
 import { socialEventRoutes } from "./routes/social";
 import type { AppEnv } from "./types";
 
@@ -22,6 +23,7 @@ export function createApp() {
     .route("/events", eventRoutes)
     .route("/me", meRoutes)
     .route("/places", placeRoutes)
+    .route("/place-photos", photoRoutes)
     .route("/groups", groupRoutes)
     .route("/announcements", announcementRoutes)
     .route("/resources", resourceRoutes)

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>Campus FEB — Slides</title>
+<style>
+@page { size: 1280px 720px; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: #1e293b; }
+.s { width: 1280px; height: 720px; padding: 64px 80px; position: relative; overflow: hidden; break-after: page; background: #f8fafc; display: flex; flex-direction: column; justify-content: center; }
+.s.dark { background: #1b2a63; color: #fff; }
+.s::after { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: #d4a72c; }
+.k { font-size: 20px; font-weight: 700; color: #d4a72c; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+h1 { font-size: 64px; margin: 0; line-height: 1.05; letter-spacing: -1.5px; color: #1b2a63; }
+.dark h1, .dark h2 { color: #fff; }
+h2 { font-size: 46px; margin: 0 0 28px; line-height: 1.1; letter-spacing: -1px; color: #1b2a63; }
+.gold { color: #d4a72c; }
+ul { margin: 0; padding: 0; list-style: none; }
+li { font-size: 30px; line-height: 1.35; margin-bottom: 16px; padding-left: 34px; position: relative; }
+li::before { content: ""; position: absolute; left: 0; top: 13px; width: 14px; height: 14px; border-radius: 50%; background: #d4a72c; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+.card { background: #fff; border-radius: 18px; padding: 26px 28px; box-shadow: 0 2px 10px rgba(27,42,99,.08); border-top: 6px solid #d4a72c; }
+.dark .card { background: rgba(255,255,255,.08); box-shadow: none; }
+.card h3 { margin: 0 0 10px; font-size: 27px; color: #1b2a63; }
+.dark .card h3 { color: #fff; }
+.card p { margin: 0; font-size: 21px; line-height: 1.4; color: #475569; }
+.dark .card p { color: #cbd5e1; }
+.big { font-size: 30px; line-height: 1.4; color: #475569; }
+.dark .big { color: #cbd5e1; }
+.num { font-size: 64px; font-weight: 800; color: #d4a72c; line-height: 1; }
+.lbl { font-size: 21px; color: #cbd5e1; margin-top: 8px; }
+.foot { position: absolute; right: 80px; bottom: 30px; font-size: 16px; color: #94a3b8; }
+.pill { display: inline-block; background: #eef1fa; color: #1b2a63; border-radius: 999px; padding: 8px 18px; font-size: 20px; font-weight: 600; margin: 0 8px 10px 0; }
+.flow { display: flex; align-items: center; gap: 14px; margin-top: 10px; }
+.step { flex: 1; background: #fff; border-radius: 16px; padding: 22px; text-align: center; box-shadow: 0 2px 10px rgba(27,42,99,.08); }
+.step .n { display: block; font-size: 40px; font-weight: 800; color: #d4a72c; }
+.step span { font-size: 20px; line-height: 1.35; display: block; margin-top: 6px; }
+.arrow { font-size: 34px; color: #d4a72c; font-weight: 800; }
+</style></head>
+<body>
+
+<!-- 1. Capa -->
+<section class="s dark" style="justify-content:center">
+  <img src="icon.svg" style="width:120px;margin-bottom:30px" alt="">
+  <h1 style="font-size:96px">Campus <span class="gold">FEB</span></h1>
+  <div class="big" style="margin-top:16px;font-size:36px">O campus do UNIFEB na palma da mão</div>
+  <div class="big" style="margin-top:46px;font-size:22px">Hackathon XXIII SESINFO · Campus Inteligente &amp; Vida Universitária</div>
+</section>
+
+<!-- 2. Problema -->
+<section class="s">
+  <div class="k">O problema</div>
+  <h2>A vida no campus está espalhada</h2>
+  <div class="cols">
+    <ul>
+      <li><b>Calouro perdido:</b> onde fica a sala, a secretaria, a biblioteca?</li>
+      <li><b>Aviso no WhatsApp, no Instagram, no mural…</b> e a vaga de estágio passa.</li>
+    </ul>
+    <ul>
+      <li><b>Horas complementares</b> em lista de papel, sem saber quanto já tem.</li>
+      <li><b>Acessibilidade:</b> onde tem rampa, banheiro acessível, vaga PcD?</li>
+    </ul>
+  </div>
+  <div class="foot">Campus FEB</div>
+</section>
+
+<!-- 3. Solução -->
+<section class="s dark">
+  <div class="k">A solução</div>
+  <h2>Um app só para a vida universitária</h2>
+  <div class="cols3">
+    <div class="card"><h3>🗺️ Mapa do campus</h3><p>3 vistas, busca de sala e serviço, "como chegar" e fotos.</p></div>
+    <div class="card"><h3>📲 Check-in por QR</h3><p>Presença em palestra em segundos e horas somadas na hora.</p></div>
+    <div class="card"><h3>📣 Avisos e vagas</h3><p>Coordenação, banners do UNIFEB e vagas de estágio.</p></div>
+    <div class="card"><h3>👥 Grupos e materiais</h3><p>Grupos de estudo com vagas e materiais compartilhados.</p></div>
+    <div class="card"><h3>🏆 Atlética</h3><p>Jogos com confirmação de presença e link para o WhatsApp.</p></div>
+    <div class="card"><h3>♿ Acessibilidade e calouro</h3><p>Camada acessível, relatos e guia da primeira semana.</p></div>
+  </div>
+</section>
+
+<!-- 4. Mapa -->
+<section class="s">
+  <div class="k">Localização de serviços</div>
+  <h2>O mapa que o campus não tinha</h2>
+  <div class="cols">
+    <ul>
+      <li><b>Mapa:</b> satélite ou ruas, com 41 locais e filtros.</li>
+      <li><b>Blocos:</b> desenho estilo GPS, cada bloco numa cor.</li>
+      <li><b>3D:</b> maquete dos prédios, girando e inclinando.</li>
+    </ul>
+    <ul>
+      <li>Busca sem acento: "biblio", "secretaria", "A12".</li>
+      <li>"Onde estou" e "Como chegar" a pé.</li>
+      <li>Fotos dos locais e <b>abre sem login</b>: o calouro usa antes da matrícula.</li>
+    </ul>
+  </div>
+  <div class="foot">Prédios do OpenStreetMap · fotos enviadas pelo admin direto do celular</div>
+</section>
+
+<!-- 5. Check-in -->
+<section class="s">
+  <div class="k">Eventos</div>
+  <h2>Presença sem fila e sem lista de papel</h2>
+  <div class="flow">
+    <div class="step"><span class="n">1</span><span>Coordenador projeta o <b>QR no telão</b></span></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="n">2</span><span>QR <b>troca a cada 10 s</b>: foto no grupo não vale</span></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="n">3</span><span>App confere <b>local e aparelho</b></span></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="n">4</span><span><b>Horas complementares</b> somam na hora</span></div>
+  </div>
+  <ul style="margin-top:40px">
+    <li>Fora do raio vira <b>suspeita</b>: o coordenador confirma ou recusa.</li>
+    <li>Sem celular? Lista impressa e lançamento manual.</li>
+  </ul>
+</section>
+
+<!-- 6. Vida universitária -->
+<section class="s dark">
+  <div class="k">Vida universitária</div>
+  <h2>Tudo que hoje está espalhado</h2>
+  <div class="cols">
+    <div class="card"><h3>Avisos e vagas</h3><p>Coordenador publica para o curso; admin para o campus. Banners do site do UNIFEB copiados sozinhos. Vagas com empresa, prazo e link.</p></div>
+    <div class="card"><h3>Grupos de estudo</h3><p>Matéria, data, local no campus ou link online, limite de vagas e "só meu curso".</p></div>
+    <div class="card"><h3>Materiais</h3><p>Resumos, apostilas, links e livros para emprestar entre alunos.</p></div>
+    <div class="card"><h3>Atlética</h3><p>Conta própria para jogos e festas, confirmação de presença e mensagem pronta para os grupos.</p></div>
+  </div>
+</section>
+
+<!-- 7. Acessibilidade e calouro -->
+<section class="s">
+  <div class="k">Inclusão</div>
+  <h2>Acessível e acolhedor desde o primeiro dia</h2>
+  <div class="cols">
+    <div class="card"><h3>♿ Acessibilidade</h3><p>Banheiros acessíveis, rampas e vagas PcD no mapa. Letras maiores, alto contraste e menos animações. Relato de rampa bloqueada ou banheiro fechado, resolvido pelo admin.</p></div>
+    <div class="card"><h3>🎓 Guia do Calouro</h3><p>Checklist da primeira semana, dúvidas frequentes, telefones, siglas e links oficiais do UNIFEB.</p></div>
+  </div>
+</section>
+
+<!-- 8. Tecnologia -->
+<section class="s dark">
+  <div class="k">Por trás</div>
+  <h2>Leve, seguro e custo zero</h2>
+  <div class="cols3" style="margin-bottom:34px">
+    <div><div class="num">139</div><div class="lbl">testes automatizados</div></div>
+    <div><div class="num">R$ 0</div><div class="lbl">de hospedagem na Cloudflare</div></div>
+    <div><div class="num">4</div><div class="lbl">perfis: aluno, coordenação, Atlética e admin</div></div>
+  </div>
+  <div>
+    <span class="pill">React + TypeScript</span><span class="pill">PWA instalável</span><span class="pill">Cloudflare Workers</span><span class="pill">D1 (SQL)</span><span class="pill">Leaflet + MapLibre 3D</span><span class="pill">OpenStreetMap</span><span class="pill">Senhas PBKDF2</span>
+  </div>
+</section>
+
+<!-- 9. Próximos passos -->
+<section class="s">
+  <div class="k">Próximos passos</div>
+  <h2>Para virar o app oficial do campus</h2>
+  <ul>
+    <li>Nomes reais de salas e fotos próprias de cada bloco.</li>
+    <li>Regulamento de horas complementares integrado com a coordenação.</li>
+    <li>IA para validar certificados de cursos externos (Alura, Udemy…).</li>
+    <li>Notificações no celular para avisos urgentes e lembrete de eventos.</li>
+  </ul>
+</section>
+
+<!-- 10. Acesse -->
+<section class="s dark" style="justify-content:center">
+  <div style="display:flex;align-items:center;gap:70px">
+    <div style="background:#fff;border-radius:24px;padding:22px"><img src="qr-site.svg" style="width:300px;display:block" alt="QR do site"></div>
+    <div>
+      <div class="k">Teste agora</div>
+      <h1 style="color:#fff;font-size:60px">Obrigado!</h1>
+      <div class="big" style="margin-top:20px">campusfeb.roqueemanuel2018.workers.dev</div>
+      <div class="big" style="margin-top:20px;font-size:24px">Login de jurado: <b style="color:#fff">jurado1</b> a <b style="color:#fff">jurado10</b> · senha <b style="color:#fff">123456</b></div>
+    </div>
+  </div>
+</section>
+
+</body></html>

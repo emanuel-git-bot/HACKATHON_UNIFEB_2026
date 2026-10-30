@@ -1,6 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#1b2a63"/>
-  <path d="M32 12c-8.3 0-15 6.5-15 14.6C17 37.5 32 52 32 52s15-14.5 15-25.4C47 18.5 40.3 12 32 12z" fill="#d4a72c"/>
-  <path d="M24 28.5 32 24l8 4.5-8 4.5z" fill="#1b2a63"/>
-  <path d="M27 31v4c0 1.4 2.2 2.6 5 2.6s5-1.2 5-2.6v-4" fill="none" stroke="#1b2a63" stroke-width="2.4" stroke-linecap="round"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1b2a63"/><svg x="9.60791366906475" y="7" width="44.7841726618705" height="50" viewBox="136 62 498 556"><path fill="#ffffff" d="M156 168 L375 76 Q385 72 395 76 L614 168 Q624 172 614 176 L550 204 Q386 152 222 204 L156 176 Q146 172 156 168 Z"/><path fill="#ffffff" d="M232 214 Q386 162 540 214 L540 284 Q386 232 232 284 Z"/><path fill="#ffffff" d="M174 184 h11 v74 h-11 Z M195.5 262 A16 16 0 1 1 163.5 262 A16 16 0 1 1 195.5 262 Z M171 276 L188 276 L199 340 Q200 348 192 348 L167 348 Q159 348 160 340 Z"/><path fill="#d4a72c" fill-rule="evenodd" d="M232 296 Q386 244 540 296 C540 386 452 494 397 590 Q386 608 375 590 C320 494 232 386 232 296 Z M320 348 A66 66 0 1 0 452 348 A66 66 0 1 0 320 348 Z"/></svg></svg>

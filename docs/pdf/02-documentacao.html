@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>Campus FEB — Documentação técnica</title><link rel="stylesheet" href="doc.css"></head>
+<body>
+
+<section class="cover">
+  <img class="logo" src="icon.svg" alt="">
+  <h1>Campus <span class="gold">FEB</span></h1>
+  <div class="sub">Documentação técnica</div>
+  <div class="meta">
+    Arquitetura, API, banco de dados, segurança, testes e deploy<br>
+    Versão de 30/10/2026 · Hackathon XXIII SESINFO — UNIFEB<br><br>
+    Produção: https://campusfeb.roqueemanuel2018.workers.dev
+  </div>
+</section>
+
+<h2>1. Visão da arquitetura</h2>
+<p>Um único <b>Cloudflare Worker</b> serve a API em <code>/api/*</code> e o front-end React compilado (Workers Static Assets) na mesma origem. Assim não há CORS, o deploy é um comando só e tudo roda na borda da Cloudflare, perto do usuário.</p>
+<table>
+  <tr><th style="width:24%">Camada</th><th>Tecnologia</th><th style="width:40%">Papel</th></tr>
+  <tr><td>Front-end</td><td>React 18, TypeScript, Vite 7, Tailwind CSS v4, React Router 7</td><td>Interface mobile first, instalável como PWA</td></tr>
+  <tr><td>Mapas</td><td>Leaflet 1.9 (Mapa e Blocos), MapLibre GL 6 (3D, carregado sob demanda)</td><td>Três vistas do campus</td></tr>
+  <tr><td>API</td><td>Hono no Cloudflare Workers, validação com Zod</td><td>Regras de acesso, validação e respostas claras</td></tr>
+  <tr><td>Regras de negócio</td><td><code>packages/core</code> (TypeScript puro)</td><td>QR, distância, presença, senhas, grupos, busca, geometria do mapa</td></tr>
+  <tr><td>Dados</td><td>Cloudflare D1 (SQLite)</td><td>Usuários, eventos, presenças, locais e conteúdo</td></tr>
+  <tr><td>Arquivos</td><td>Cloudflare KV (<code>campusfeb-photos</code>)</td><td>Fotos dos locais (original e miniatura)</td></tr>
+  <tr><td>Agendamento</td><td>Cron Trigger do Worker</td><td>Cópia dos banners do site do UNIFEB a cada 6 horas</td></tr>
+</table>
+<div class="note">As regras de negócio não importam React, Hono nem APIs da Cloudflare (arquitetura limpa). Isso deixa o núcleo testável com Vitest e permite trocar o framework sem reescrever as regras.</div>
+
+<h2>2. Estrutura do repositório</h2>
+<table>
+  <tr><th style="width:30%">Pasta</th><th>Conteúdo</th></tr>
+  <tr><td><code>apps/web</code></td><td>React: páginas do aluno (<code>student/</code>), coordenador (<code>coord/</code>), Atlética (<code>org/</code>), admin (<code>admin/</code>), componentes de mapa, PWA (<code>public/</code>)</td></tr>
+  <tr><td><code>apps/web/scripts</code></td><td><code>fetch-campus-osm.mjs</code>: baixa os prédios do OpenStreetMap e gera <code>src/data/campus-osm.json</code></td></tr>
+  <tr><td><code>apps/api/src</code></td><td><code>app.ts</code> (rotas), <code>routes/</code>, <code>lib/</code> (sessão, erros HTTP), <code>services/</code></td></tr>
+  <tr><td><code>apps/api/migrations</code></td><td>4 migrações SQL do D1 (<code>0001</code> a <code>0004</code>)</td></tr>
+  <tr><td><code>apps/api/scripts</code></td><td>Seed com dados de demonstração (apaga tudo: só para ambiente local)</td></tr>
+  <tr><td><code>packages/core</code></td><td>Regras puras e testadas (<code>campus.ts</code>, <code>campus-map.ts</code>, <code>photos.ts</code>, QR, presença, senhas)</td></tr>
+  <tr><td><code>openspec/</code></td><td>Propostas, especificações e tarefas (fluxo OpenSpec)</td></tr>
+  <tr><td><code>docs/</code></td><td>Perguntas e decisões, estes PDFs</td></tr>
+</table>
+
+<h2>3. API</h2>
+<p>Todas as rotas ficam sob <code>/api</code>, recebem e devolvem JSON (exceto upload de fotos, que é multipart) e respondem erros no formato <code>{ error, message, field? }</code> com mensagens em português.</p>
+<table>
+  <tr><th style="width:30%">Grupo</th><th>Rotas principais</th><th style="width:16%">Acesso</th></tr>
+  <tr><td><code>/auth</code></td><td>POST login, register, logout · GET me</td><td>Público / logado</td></tr>
+  <tr><td><code>/courses</code></td><td>Lista de cursos (cadastro)</td><td>Público</td></tr>
+  <tr><td><code>/events</code></td><td>GET lista e detalhe · POST/DELETE <code>:id/register</code> (inscrição)</td><td>Aluno</td></tr>
+  <tr><td><code>/me</code></td><td>GET events (meus eventos) · GET hours (horas complementares)</td><td>Aluno</td></tr>
+  <tr><td><code>/scan</code>, <code>/checkin</code>, <code>/events/:id/keyword</code></td><td>Leitura do QR, confirmação de presença com local e aparelho, palavra-chave de saída</td><td>Aluno</td></tr>
+  <tr><td><code>/places</code></td><td>GET lista (com fotos) · POST, PUT, DELETE</td><td>Público / admin</td></tr>
+  <tr><td><code>/place-photos</code></td><td>POST envio (multipart) · DELETE · GET <code>:id/full|thumb</code> com cache longo</td><td>Admin / público</td></tr>
+  <tr><td><code>/groups</code></td><td>Lista, detalhe, criar, entrar e sair (<code>:id/join</code>), excluir</td><td>Aluno</td></tr>
+  <tr><td><code>/announcements</code></td><td>Lista por público, marcar lido, publicar, excluir</td><td>Aluno / coordenador / admin</td></tr>
+  <tr><td><code>/resources</code></td><td>Materiais: listar, compartilhar, excluir (dono ou admin)</td><td>Aluno</td></tr>
+  <tr><td><code>/accessibility-reports</code></td><td>Relatar, listar, <code>:id/resolve</code></td><td>Aluno / admin</td></tr>
+  <tr><td><code>/social-events</code></td><td>Jogos da Atlética: CRUD, <code>:id/rsvp</code>, <code>:id/rsvps</code></td><td>Público / Atlética</td></tr>
+  <tr><td><code>/banners</code></td><td>GET banners · POST sync (forçar cópia)</td><td>Público / admin</td></tr>
+  <tr><td><code>/coord</code></td><td>Eventos, fases, QR, presenças, revisão, lançamento manual, tentativas, lista impressa</td><td>Coordenador</td></tr>
+  <tr><td><code>/admin</code></td><td>Cursos, coordenadores, contas da Atlética, rede da faculdade (IP do Wi-Fi)</td><td>Admin</td></tr>
+</table>
+
+<h2>4. Banco de dados (D1)</h2>
+<table>
+  <tr><th style="width:30%">Área</th><th>Tabelas</th></tr>
+  <tr><td>Contas e acesso</td><td><code>users</code>, <code>courses</code>, <code>sessions</code>, <code>login_attempts</code>, <code>settings</code></td></tr>
+  <tr><td>Palestras e presença</td><td><code>events</code>, <code>registrations</code>, <code>attendance</code>, <code>scan_tickets</code>, <code>checkin_attempts</code></td></tr>
+  <tr><td>Mapa</td><td><code>places</code>, <code>place_photos</code> (arquivos no KV: <code>place-photo:&lt;id&gt;:full|thumb</code>)</td></tr>
+  <tr><td>Vida universitária</td><td><code>study_groups</code>, <code>study_group_members</code>, <code>announcements</code>, <code>announcement_reads</code>, <code>resources</code>, <code>accessibility_reports</code></td></tr>
+  <tr><td>Atlética e site</td><td><code>social_events</code>, <code>social_event_rsvps</code>, <code>site_banners</code></td></tr>
+</table>
+<p class="muted">Migrações: 0001 (base do SyncFEB), 0002 (campus), 0003 (Atlética, vagas e banners; recria <code>users</code> com o papel <code>organizer</code>), 0004 (fotos dos locais).</p>
+
+<h2>5. Check-in por QR Code</h2>
+<ol>
+  <li>O coordenador abre o <b>Telão</b>: o QR é assinado pelo servidor e troca a cada <b>10 segundos</b> (aceita até 5 s de atraso da câmera e da rede).</li>
+  <li>O aluno lê o QR no app; o servidor gera um ticket de leitura de uso único.</li>
+  <li>Na confirmação, o servidor confere: <b>local</b> (GPS dentro do raio do evento, com precisão até 150 m, ou IP do Wi-Fi da faculdade), <b>aparelho</b> (um aparelho por aluno no evento) e a <b>fase</b> (entrada ou saída).</li>
+  <li>QR vencido ou aparelho repetido: bloqueia. Fora do raio: presença <b>suspeita</b>, que o coordenador confirma ou recusa.</li>
+  <li>Modos por evento: só entrada, só saída, entrada + saída, ou entrada + palavra-chave no fim (até 3 tentativas).</li>
+  <li>Presença concluída soma as horas do evento em <code>/me/hours</code>. Sem celular: lista impressa e lançamento manual.</li>
+</ol>
+
+<h2>6. Mapa do campus</h2>
+<ul>
+  <li><b>Mapa</b>: Leaflet com satélite (Esri) ou ruas (OpenStreetMap), pinos por categoria, busca sem acento e filtros.</li>
+  <li><b>Blocos</b>: desenho dos 47 prédios do OpenStreetMap, sem imagens. <code>layoutCampus</code> (core) dá nome a cada prédio pelos locais dentro dele (ou a até 15 m), junta prédios do mesmo bloco e calcula os andares.</li>
+  <li><b>3D</b>: MapLibre GL com prédios extrudados (3,6 m por andar), carregado só quando escolhido; mostra aviso se o aparelho não tiver WebGL.</li>
+  <li><b>Fotos</b>: o navegador reduz antes de enviar (1600 px e miniatura de 480 px); o servidor confere o tipo pelos bytes (JPEG, PNG, WebP), limita a 2 MB e 6 fotos por local.</li>
+  <li>Seleção e vista ficam na URL (<code>?vista=blocos&amp;local=...</code>), então dá para compartilhar o link de um local.</li>
+</ul>
+
+<h2>7. Segurança</h2>
+<ul>
+  <li>Senhas com <b>PBKDF2</b> (Web Crypto) e sal por usuário.</li>
+  <li>Sessão em cookie HttpOnly com validade de 7 dias, guardada no D1 (pode ser revogada).</li>
+  <li>Login bloqueado por 15 minutos após 5 tentativas erradas; mesma mensagem para RA inexistente e senha errada.</li>
+  <li>Toda entrada validada com Zod; permissões por papel em cada rota (<code>requireRole</code>).</li>
+  <li>Segredos só em <code>wrangler secret</code>; nada de senha no código de produção.</li>
+  <li>Upload só para admin, com checagem de tipo pelos bytes e <code>X-Content-Type-Options: nosniff</code>.</li>
+</ul>
+
+<h2>8. Testes</h2>
+<p><b>139 testes</b> com Vitest: as regras de <code>packages/core</code> (QR, distância, presença, busca, agrupamento dos blocos, fotos) e a API inteira contra um SQLite em memória (login e bloqueio, check-in e suas travas, mapa e fotos, grupos, avisos e vagas, materiais, Atlética, banners e relatos).</p>
+<p>Comando: <code>npm test</code> · Tipos: <code>npm run typecheck</code></p>
+
+<h2>9. Rodar localmente</h2>
+<ol>
+  <li>Node 22.13+ e <code>npm install</code></li>
+  <li><code>npm run db:migrate:local</code> e <code>npm run db:seed:local</code></li>
+  <li><code>npm run build</code> e <code>npm run dev -w apps/api</code> → http://localhost:8788</li>
+  <li>Para editar o front com recarga: <code>npm run dev -w apps/web</code> → http://localhost:5173</li>
+</ol>
+
+<h2>10. Deploy</h2>
+<ul>
+  <li><code>npm run deploy</code>: compila o React e publica o Worker <code>campusfeb</code> (D1 <code>campusfeb</code>, KV <code>campusfeb-photos</code>).</li>
+  <li>Migrações em produção: <code>npm run db:migrate:remote -w apps/api</code>.</li>
+  <li><b>Nunca</b> rodar o seed em produção: ele apaga todos os dados.</li>
+  <li>Separado do projeto 1 (SyncFEB), que continua publicado no próprio Worker.</li>
+</ul>
+
+<h2>11. Decisões e limites conhecidos</h2>
+<ul>
+  <li>Fotos no KV porque o R2 não está ativado na conta; o volume (até 6 fotos de ~300 KB por local) cabe bem.</li>
+  <li>Nomes de salas são exemplos; posições e desenho vêm do OpenStreetMap. Correção pelo Admin → Mapa.</li>
+  <li>A altura dos prédios no 3D é estimada pelos andares informados nos locais.</li>
+  <li>IA de certificados ficou fora da demo para não gerar custo (próximo passo).</li>
+</ul>
+
+</body></html>

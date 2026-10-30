@@ -41,18 +41,20 @@ export class ApiError extends Error {
   }
 }
 
+/** `body` em FormData vai como multipart (fotos); qualquer outro valor vai como JSON. */
 export async function api<T = any>(path: string, options: { method?: string; body?: unknown } = {}): Promise<T> {
   const headers: Record<string, string> = {};
   const device = deviceToken();
   if (device) headers["X-Device-Token"] = device;
-  if (options.body !== undefined) headers["Content-Type"] = "application/json";
+  const isForm = options.body instanceof FormData;
+  if (options.body !== undefined && !isForm) headers["Content-Type"] = "application/json";
 
   let res: Response;
   try {
     res = await fetch(`/api${path}`, {
       method: options.method ?? (options.body !== undefined ? "POST" : "GET"),
       headers,
-      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+      body: options.body === undefined ? undefined : isForm ? (options.body as FormData) : JSON.stringify(options.body),
       credentials: "same-origin",
     });
   } catch {
